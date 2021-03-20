@@ -1,0 +1,78 @@
+{
+    "user":[
+            {
+            "nome":"Antonio",
+            "email":"rodrigowserra@gmail.com",
+            "conta":[
+                {
+                    "nome": "Nubank",
+                    "tipoConta" : "cc",
+                    "moeda": "brl",
+                    "movimentacoes":
+                    [  
+                        {
+                        "id": 1,
+                        "nome":"Celular",
+                        "valor": 67.4,
+                        "data": "2021-03-10",
+                        "tipo": "D",
+                        "categoria":"Celular"
+                        },
+                        {
+                        "id": 2,    
+                        "nome":"Supermercado",
+                        "valor": 210.5,
+                        "data": "2021-03-3",
+                        "tipo": "D",
+                        "categoria": "Alimentação"
+                        }
+                    ]
+                },
+                {
+                    "nome": "N26",
+                    "tipoConta" : "cc",
+                    "moeda": "eur",
+                    "movimentacoes":
+                    [  
+                        {
+                        "id": 1,
+                        "nome":"Restaurante",
+                        "valor": 50,
+                        "data": "2021-03-20",
+                        "tipo": "D",
+                        "categoria": "Alimentação Lazer"
+                        },
+                        {
+                        "id": 2,
+                        "nome":"Adentis",
+                        "valor": 5000,
+                        "data": "2021-03-1",
+                        "tipo": "R",
+                        "categoria" : "Salário"
+                        }
+                    ]
+                }
+            ],
+            "categorias-despesa":[
+                {
+                    "id":"1",
+                    "nome": "Alimentação"
+                },
+                {
+                    "id":"2",
+                    "nome": "Restaurante"
+                }
+            ],
+            "categorias-receitas":[
+                {
+                    "id":"1",
+                    "nome": "Salário"
+                },
+                {
+                    "id":"2",
+                    "nome": "Ações"
+                }
+            ]
+        }
+    ]
+}
