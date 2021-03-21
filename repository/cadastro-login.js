@@ -1,12 +1,4 @@
-//VARIÁVEIS
-const cadastrarButton = document.querySelector("#cadastrarButton");
-const entrarButton = document.querySelector("#entrarButton");
-const inputName = document.querySelector("#inputName");
-const inputEmail = document.querySelector("#inputEmail");
-const inputPassword = document.querySelector("#inputPassword");
-const labelMensagem = document.querySelector("#mensagem-index");
-//MÉTODOS
-cadastrarButton.addEventListener("click", ()=>{
+function createUser(){
     firebase.auth().createUserWithEmailAndPassword(inputEmail.value, inputPassword.value)
     .then((user) => {
         const uid = user.user.uid;
@@ -15,29 +7,30 @@ cadastrarButton.addEventListener("click", ()=>{
             email: inputEmail.value,
             nome : inputName.value
         })
-        alert("Conta criada com sucesso!");
+        alert("Cadastro realizado com sucesso!");
     })
     .catch((error) => {
         labelMensagem.innerHTML = error.message;
     });
-})
+}
 
-entrarButton.addEventListener("click", ()=>{
+function login(){
     firebase.auth().signInWithEmailAndPassword(inputEmail.value, inputPassword.value).then(function(user) {
         const uid = user.user.uid;
         firestore.doc(`users/${uid}`).get().then(()=>{
+            window.location.href = "./views/index-vida-financeira.html"
         })
     })
     .catch((error) => {
-        alert(error.message);
+        labelMensagem.innerHTML = error.message;
     });
-})
+}
 
 /*
-sairButton.addEventListener("click", ()=>{
+function sair(){
     firebase.auth().signOut().then(() => {
         alert("User logout");   
     }).catch((error) => {
         console.log(error.message);
     });
-})*/
+}*/
