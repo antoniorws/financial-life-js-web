@@ -4,9 +4,27 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="./styles/index.css" rel="stylesheet">
+    <link rel="icon" href="./assets/favicon.png">
+    <script src="https://www.gstatic.com/firebasejs/8.2.10/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.2.10/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.2.10/firebase-auth.js"></script>
     <title>Vida Financeira</title>
 </head>
 <body>
-    
+  <div class="login-div">
+    <img class="img-index" src="./assets/icon-index.png" alt="">
+    <input type="textfield" class="input-index" id="inputName" placeholder="Nome"/>
+    <input type="textfield" class="input-index" id="inputEmail" placeholder="E-mail"/>
+    <input type="password" class="input-index" id="inputPassword" placeholder="Senha"/>
+    <label class="label-mensagem" id="mensagem-index"></label>
+  </div>
+  <div class="login-div">
+    <button class="btn-index" id="cadastrarButton">Cadastrar</button>
+    <button class="btn-index" id="entrarButton">Entrar</button>  
+  </div>
+  <script src="./config/firebaseconfig.js"></script>
+  <script src="./repository/cadastro-login.js"></script>
+  <script src="./service/index-service.js"></script>
 </body>
 </html>
