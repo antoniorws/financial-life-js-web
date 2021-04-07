@@ -1,5 +1,5 @@
-function createUser(){
-    firebase.auth().createUserWithEmailAndPassword(inputEmail.value, inputPassword.value)
+function createUser(email, password){
+    firebase.auth().createUserWithEmailAndPassword(email, password)
     .then((user) => {
         const uid = user.user.uid;
         const users = firestore.collection("users");
@@ -14,8 +14,8 @@ function createUser(){
     });
 }
 
-function login(){
-    firebase.auth().signInWithEmailAndPassword(inputEmail.value, inputPassword.value).then(function(user) {
+function login(email, password){
+    firebase.auth().signInWithEmailAndPassword(email, password).then(function(user) {
         const uid = user.user.uid;
         firestore.doc(`users/${uid}`).get().then(()=>{
             window.location.href = "./views/index-vida-financeira.html"
@@ -26,11 +26,13 @@ function login(){
     });
 }
 
-/*
 function sair(){
     firebase.auth().signOut().then(() => {
-        alert("User logout");   
+        console.log("User logout");
+        /**
+         * TODO - go to some screen
+         */   
     }).catch((error) => {
         console.log(error.message);
     });
-}*/
+}

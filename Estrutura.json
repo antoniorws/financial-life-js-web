@@ -1,5 +1,5 @@
 {
-    "user":[
+    "users":[
             {
             "nome":"Antonio",
             "email":"rodrigowserra@gmail.com",
@@ -53,7 +53,7 @@
                     ]
                 }
             ],
-            "categorias-despesa":[
+            "categorias-despesas":[
                 {
                     "id":"1",
                     "nome": "Alimentação"

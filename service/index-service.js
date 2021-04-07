@@ -8,7 +8,7 @@ const labelMensagem = document.querySelector("#mensagem-index");
 cadastrarButton.addEventListener("click", ()=>{
     const name = inputName.value;
     if(name != null && name.trim() != ""){
-        createUser()
+        createUser(inputEmail.value, inputPassword.value)
     }else{
         alert("Preencha o campo Nome!");
         inputName.focus();
@@ -16,5 +16,5 @@ cadastrarButton.addEventListener("click", ()=>{
 })
 
 entrarButton.addEventListener("click", ()=>{
-    login()
+    login(inputEmail.value, inputPassword.value)
 })

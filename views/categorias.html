@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="../styles/index-vida-financeira.css" rel="stylesheet">
+    <link href="../styles/categorias.css" rel="stylesheet">
+    <script src="https://www.gstatic.com/firebasejs/8.2.10/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.2.10/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.2.10/firebase-auth.js"></script>
+    <script src="../config/firebaseconfig.js"></script>
+    <script src="../repository/categorias-repository.js" defer="defer"></script>
+    <script src="../service/categorias-service.js" defer="defer"></script>
+    <title>Categorias</title>
+</head>
+<body>
+    <div class="topnav">
+        <a class="active" href="./index-vida-financeira.html">Home</a>
+        <a href="categorias.html">Categorias</a>
+    </div>
+    <div class="div-despesas">
+        <h1 class="alinhar-horizontal">Despesas</h1>
+        <input class="alinhar-horizontal" type="text" placeholder="Nome da Categoria" id="novaCategoriaDespesa">
+        <button class="alinhar-horizontal" id="cadastrarDespesa">Cadastrar</button>
+        <table id="table-despesas">
+            <tr>
+              <th>Id</th>
+              <th>Descrição</th>
+              <th></th>
+            </tr>
+        </table>
+    </div>
+    <div class="div-receitas">
+        <h1>Receitas</h1>
+        <input class="alinhar-horizontal" type="text" placeholder="Nome da Categoria" id="novaCategoriaReceita">
+        <button class="alinhar-horizontal" id="cadastrarReceita">Cadastrar</button>
+        <table id="table-receitas">
+            <tr>
+                <th>Id</th>
+                <th>Descrição</th>
+                <th></th>
+            </tr>
+        </table>
+    </div>
+</body>
+</html>
