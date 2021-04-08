@@ -9,6 +9,24 @@ function criarCategoriaDeDespesa(uid, nome){
     })
 }
 
+function excluirCategoriaDeDespesa(uid, uiCategoria){
+    firestore.doc("users/" + uid + "/categoria_despesa/" + uiCategoria).delete()
+}
+
+function excluirCategoriaDeReceita(uid, uiCategoria){
+    firestore.doc("users/" + uid + "/categoria_receita/" + uiCategoria).delete()
+}
+
+function atualizaCategoriaDeDespesa(uid, uiCategoria, nome){
+    firestore.doc("users/" + uid + "/categoria_despesa/" + uiCategoria)
+    .set({"nome": nome})
+}
+
+function atualizaCategoriaDeReceita(uid, uiCategoria, nome){
+    firestore.doc("users/" + uid + "/categoria_receita/" + uiCategoria)
+    .set({"nome": nome})
+}
+
 function criarCategoriaDeReceita(uid, nome){
     firestore.collection("users/" + uid + "/categoria_receita")
     .add({
