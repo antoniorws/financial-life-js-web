@@ -43,12 +43,17 @@ function carregaCategoriasDespesas(){
             tr.appendChild(btnCategoriaExcluir)
             tableDespesas.appendChild(tr)
 
-            btnCategoriaAtualizar.addEventListener("click", () =>{
-                //TODO atualizar categoria
+            btnCategoriaAtualizar.addEventListener("click", () => {
+                let nomeAlterado = prompt("Digite o novo nome da categoria:", "");
+                if (nomeAlterado != null || nomeAlterado != "") {
+                    tdNome.innerText = nomeAlterado;
+                    atualizaCategoriaDeDespesa(firebase.auth().currentUser.uid, tipoDespesa.id, nomeAlterado)
+                } 
             })
 
             btnCategoriaExcluir.addEventListener("click", () => {
-                //TODO excluir categoria
+                excluirCategoriaDeDespesa(firebase.auth().currentUser.uid, tipoDespesa.id)
+                tr.remove()
             })
         });
     }).catch(error =>{
@@ -67,13 +72,32 @@ function carregaCategoriasReceitas(){
             const tr = document.createElement("TR")
             const tdId = document.createElement("TD")
             const tdNome = document.createElement("TD")
+            const btnCategoriaExcluir = document.createElement("BUTTON")
+            const btnCategoriaAtualizar = document.createElement("BUTTON")
+            btnCategoriaExcluir.innerText = "Exluir"
+            btnCategoriaAtualizar.innerText = "Alterar"
             tdId.className = tipoReceita.id
             tdNome.className = tipoReceita.id
             tdId.innerText = tipoReceita.id
             tdNome.innerText = tipoReceita.data().nome 
             tr.appendChild(tdId)
             tr.appendChild(tdNome)
+            tr.appendChild(btnCategoriaAtualizar)
+            tr.appendChild(btnCategoriaExcluir)
             tableReceitas.appendChild(tr)
+
+            btnCategoriaAtualizar.addEventListener("click", () => {
+                let nomeAlterado = prompt("Digite o novo nome da categoria:", "");
+                if (nomeAlterado != null || nomeAlterado != "") {
+                    tdNome.innerText = nomeAlterado;
+                    atualizaCategoriaDeReceita(firebase.auth().currentUser.uid, tipoReceita.id, nomeAlterado)
+                } 
+            })
+
+            btnCategoriaExcluir.addEventListener("click", () => {
+                excluirCategoriaDeReceita(firebase.auth().currentUser.uid, tipoReceita.id)
+                tr.remove()
+            })
         });
     }).catch(error =>{
         console.log(error.message);
