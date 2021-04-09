@@ -23,7 +23,7 @@ th {
 
 button{
     cursor: pointer;
-    margin-bottom: 5px;
+    margin: 5px;
     font-weight: 400;
     text-align: center;
     white-space: nowrap;

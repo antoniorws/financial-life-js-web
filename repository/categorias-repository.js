@@ -1,11 +1,7 @@
 function criarCategoriaDeDespesa(uid, nome){
-    firestore.collection("users/" + uid + "/categoria_despesa")
+    return firestore.collection("users/" + uid + "/categoria_despesa")
     .add({
-        nome: nome
-    }).then(()=>{
-        console.log("Despesa salva com sucesso!");
-    }).catch(error =>{
-        console.log(error.message);
+        "nome": nome
     })
 }
 
@@ -28,13 +24,9 @@ function atualizaCategoriaDeReceita(uid, uiCategoria, nome){
 }
 
 function criarCategoriaDeReceita(uid, nome){
-    firestore.collection("users/" + uid + "/categoria_receita")
+    return firestore.collection("users/" + uid + "/categoria_receita")
     .add({
-        nome: nome
-    }).then(()=>{
-        console.log("Despesa salva com sucesso!");
-    }).catch(error =>{
-        console.log(error.message);
+        "nome": nome
     })
 }
 
