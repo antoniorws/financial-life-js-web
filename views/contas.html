@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="../styles/dashboard.css" rel="stylesheet">
+    <link href="../styles/contas.css" rel="stylesheet">
+    <script src="https://www.gstatic.com/firebasejs/8.2.10/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.2.10/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.2.10/firebase-auth.js"></script>
+    <script src="../config/firebaseconfig.js"></script>
+    <script src="../repository/contas-repository.js" defer="defer"></script>
+    <script src="../service/contas-service.js" defer="defer"></script>
+    <title>Contas</title>
+</head>
+<body>
+    <div class="topnav">
+        <a class="active" href="./dashboard.html">Home</a>
+        <a href="categorias.html">Categorias</a>
+        <a href="contas.html">Contas</a>
+    </div>
+    <div class="div-contas">
+        <h1 class="alinhar-horizontal">Contas</h1>
+        <input class="alinhar-horizontal" type="text" placeholder="Nome da Conta" id="nomeNovaConta">
+        <select id="tipoConta">
+            <option value="CC" selected>Conta Corrente</option>
+            <option value="CP">Conta Poupança</option>
+            <option value="CS">Conta Salário</option>
+            <option value="CI">Conta Investimento</option>
+        </select>
+        <select id="moeda">
+            <option value="BRL" selected>BRL</option>
+            <option value="EUR" selected>EUR</option>
+            <option value="USD" selected>USD</option>
+        </select>
+        <button class="alinhar-horizontal" id="cadastrarContas">Cadastrar</button>
+        <table id="tableContas">
+            <tr>
+              <th>Id</th>
+              <th>Nome</th>
+              <th>Tipo da Conta</th>
+              <th>Moeda</th>
+              <th></th>
+            </tr>
+        </table>
+    </div>
+</body>
+</html>

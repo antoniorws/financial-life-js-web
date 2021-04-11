@@ -5,12 +5,14 @@ const textDespesa = document.querySelector("#novaCategoriaDespesa")
 const tableDespesas = document.querySelector("#table-despesas")
 const tableReceitas = document.querySelector("#table-receitas")
 
+/**
+ * @description Verifica se existe usuário.
+ */
 function verificaUser(){
     firebase.auth().onAuthStateChanged(function(user) {
         if (user) {
-            console.log('Usuário logado')
-            console.log(carregaCategoriasDespesas())
             carregaCategoriasReceitas()
+            carregaCategoriasDespesas()
         } else {
             console.log('Usuário não logado')
         }
@@ -21,12 +23,10 @@ function carregaCategoriasDespesas(){
     while(tableDespesas.childNodes.length > 2){
         tableDespesas.removeChild(tableDespesas.lastChild);
     }
-    const uid = firebase.auth().currentUser.uid
-    firestore.collection("users/" + uid + "/categoria_despesa")
-    .get()
-    .then((tiposDeDespesas) => {
+    const response = getCategoriasDeDespesa(firebase.auth().currentUser.uid)
+    response.then((tiposDeDespesas) => {
         tiposDeDespesas.forEach(tipoDespesa => {
-            updateTable(tipoDespesa.id, tipoDespesa.data().nome, tableDespesas)
+            updateTable(tipoDespesa.id, tipoDespesa.data().nome, tableDespesas, "/categoria_despesa/")
             
         });
     }).catch(error =>{
@@ -42,7 +42,7 @@ function carregaCategoriasReceitas(){
     const response = getCategoriasDeReceita(firebase.auth().currentUser.uid)
     response.then((tiposDeReceitas) => {
         tiposDeReceitas.forEach(tipoReceita => {
-            updateTable(tipoReceita.id, tipoReceita.data().nome, tableReceitas)
+            updateTable(tipoReceita.id, tipoReceita.data().nome, tableReceitas, "/categoria_receita/")
             
         });
     }).catch(error =>{
@@ -53,7 +53,7 @@ function carregaCategoriasReceitas(){
 btnCadastrarDespesa.addEventListener("click", () => {
     criarCategoriaDeDespesa(firebase.auth().currentUser.uid, textDespesa.value)
     .then((despesaCategory) => {
-        updateTable(despesaCategory.id, textDespesa.value, tableDespesas)
+        updateTable(despesaCategory.id, textDespesa.value, tableDespesas, "/categoria_despesa/")
 
     }).catch(error => {
         alert(error.message)
@@ -64,7 +64,7 @@ btnCadastrarDespesa.addEventListener("click", () => {
 btnCadastrarReceita.addEventListener("click", () => {
     criarCategoriaDeReceita(firebase.auth().currentUser.uid, textReceita.value)
     .then((receitaCategory) => {
-        updateTable(receitaCategory.id, textReceita.value, tableReceitas)
+        updateTable(receitaCategory.id, textReceita.value, tableReceitas, "/categoria_receita/")
 
     }).catch(error => {
         alert(error.message)
@@ -72,7 +72,7 @@ btnCadastrarReceita.addEventListener("click", () => {
     textReceita.innerText = ""
 })
 
-function updateTable(idMovimentacao, nomeMovimentacao, table){
+function updateTable(idMovimentacao, nomeMovimentacao, table, categoria){
     const tr = document.createElement("TR")
     const tdId = document.createElement("TD")
     const tdNome = document.createElement("TD")
@@ -94,12 +94,12 @@ function updateTable(idMovimentacao, nomeMovimentacao, table){
         let nomeAlterado = prompt("Digite o novo nome da categoria:", "");
         if (nomeAlterado != null && nomeAlterado != "") {
             tdNome.innerText = nomeAlterado;
-            atualizaCategoriaDeDespesa(firebase.auth().currentUser.uid, idMovimentacao, nomeAlterado)
+            atualizaCategoria(firebase.auth().currentUser.uid, idMovimentacao, nomeAlterado, categoria)
         } 
     })
 
     btnCategoriaExcluir.addEventListener("click", () => {
-        excluirCategoriaDeDespesa(firebase.auth().currentUser.uid, idMovimentacao)
+        excluirCategoria(firebase.auth().currentUser.uid, idMovimentacao, categoria)
         tr.remove()
     })
 }

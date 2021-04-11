@@ -18,7 +18,7 @@ function login(email, password){
     firebase.auth().signInWithEmailAndPassword(email, password).then(function(user) {
         const uid = user.user.uid;
         firestore.doc(`users/${uid}`).get().then(()=>{
-            window.location.href = "./views/index-vida-financeira.html"
+            window.location.href = "./views/dashboard.html"
         })
     })
     .catch((error) => {
