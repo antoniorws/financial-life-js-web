@@ -5,6 +5,7 @@
             "email":"rodrigowserra@gmail.com",
             "conta":[
                 {
+                    "id": "1",
                     "nome": "Nubank",
                     "tipoConta" : "cc",
                     "moeda": "brl",
@@ -29,6 +30,7 @@
                     ]
                 },
                 {
+                    "id": "2",
                     "nome": "N26",
                     "tipoConta" : "cc",
                     "moeda": "eur",
