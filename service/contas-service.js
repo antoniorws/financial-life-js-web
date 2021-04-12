@@ -3,6 +3,8 @@ const nomeNovaConta = document.querySelector("#nomeNovaConta")
 const tipoContaNovaConta = document.querySelector("#tipoConta")
 const moedaNovaConta = document.querySelector("#moeda")
 const tableContas = document.querySelector("#tableContas")
+const divNovosDados = document.querySelector("#div-novos-dados")
+const btnCancelar = document.querySelector("#cancelaAtualizacao")
 
 /**
  * @description Verifica se existe usuário.
@@ -70,7 +72,38 @@ function updateTable(conta){
     tableContas.appendChild(tr)
 
     btnAtualizar.addEventListener("click", () => {
-        //TODO
+        const tableButtons = document.querySelectorAll("table button")
+        for(var i = 0; i < tableButtons.length; i++){
+            tableButtons[i].classList.add("disabled-button")
+        }
+
+        btnCadastrar.classList.add("hidden-class")
+        btnCancelar.classList.remove("hidden-class")
+        nomeNovaConta.value = conta.nome
+        tipoContaNovaConta.value = conta.tipoConta
+        moedaNovaConta.value = conta.moeda
+        nomeNovaConta.focus()
+
+        const btnAtualizarContas = document.createElement("BUTTON")
+        btnAtualizarContas.innerText = "Atualizar"
+        divNovosDados.appendChild(btnAtualizarContas)
+        btnAtualizarContas.addEventListener("click", () => {
+            const contaJSON = {
+                "nome": nomeNovaConta.value,
+                "tipoConta": tipoContaNovaConta.value,
+                "moeda": moedaNovaConta.value
+            }
+            atualizaConta(firebase.auth().currentUser.uid, conta.id, contaJSON)
+            tdNome.innerText = nomeNovaConta.value
+            tdMoeda.innerText = moedaNovaConta.value
+            tdTipoConta.innerText = tipoContaNovaConta.value
+            cancelar(btnAtualizarContas)
+            
+        })
+
+        btnCancelar.addEventListener("click", () => {
+            cancelar(btnAtualizarContas)
+        })
     })
 
     btnExcluir.addEventListener("click", () => {
@@ -97,5 +130,18 @@ btnCadastrar.addEventListener("click", () => {
     })
     nomeNovaConta.innerText = ""
 })
+
+function cancelar(btnAtualizarContas){
+    const tableButtons = document.querySelectorAll("table button")
+    btnCadastrar.classList.remove("hidden-class")
+    btnAtualizarContas.remove()
+    btnCancelar.classList.add("hidden-class")
+    nomeNovaConta.value = ""
+    tipoContaNovaConta.value = "CC"
+    moedaNovaConta.value = "BRL"
+    for(var i = 0; i < tableButtons.length; i++){
+        tableButtons[i].classList.remove("disabled-button")
+    }
+}
 
 verificaUser(); 

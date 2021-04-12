@@ -24,8 +24,8 @@ function excluirConta(uid, idConta){
  * @param {JSON} conta 
  * @description Atualiza uma conta
  */
-function atualizaConta(uid, conta){
-    firestore.doc("users/" + uid + "/contas/" + conta.id).set(conta)
+function atualizaConta(uid, idConta, conta){
+    firestore.doc("users/" + uid + "/contas/" + idConta).set(conta)
 }
 
 /**
