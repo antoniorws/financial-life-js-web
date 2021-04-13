@@ -9,6 +9,7 @@
                     "nome": "Nubank",
                     "tipoConta" : "cc",
                     "moeda": "brl",
+                    "saldo": 500,
                     "movimentacoes":
                     [  
                         {
@@ -34,6 +35,7 @@
                     "nome": "N26",
                     "tipoConta" : "cc",
                     "moeda": "eur",
+                    "saldo": 200,
                     "movimentacoes":
                     [  
                         {

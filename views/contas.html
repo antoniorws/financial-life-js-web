@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="../styles/dashboard.css" rel="stylesheet">
-    <link href="../styles/contas.css" rel="stylesheet">
+    <link rel="icon" href="../assets/favicon.png">
+    <link href="../styles/style.css" rel="stylesheet">
     <script src="https://www.gstatic.com/firebasejs/8.2.10/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.2.10/firebase-firestore.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.2.10/firebase-auth.js"></script>
@@ -35,6 +35,7 @@
                 <option value="EUR" selected>EUR</option>
                 <option value="USD" selected>USD</option>
             </select>
+            <input  type="number" placeholder="Saldo" id="saldoNovaConta">
             <button id="cadastrarContas">Cadastrar</button>
             <button id="cancelaAtualizacao" class="hidden-class">Cancelar</button>
         </div>
@@ -46,6 +47,7 @@
               <th>Nome</th>
               <th>Tipo da Conta</th>
               <th>Moeda</th>
+              <th>Saldo</th>
               <th></th>
             </tr>
         </table>

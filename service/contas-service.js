@@ -1,5 +1,6 @@
 const btnCadastrar = document.querySelector("#cadastrarContas")
 const nomeNovaConta = document.querySelector("#nomeNovaConta")
+const saldoNovaConta = document.querySelector("#saldoNovaConta")
 const tipoContaNovaConta = document.querySelector("#tipoConta")
 const moedaNovaConta = document.querySelector("#moeda")
 const tableContas = document.querySelector("#tableContas")
@@ -33,7 +34,8 @@ function getAllContas(){
                 "id": conta.id,
                 "nome": conta.data().nome,
                 "tipoConta": conta.data().tipoConta,
-                "moeda": conta.data().moeda
+                "moeda": conta.data().moeda,
+                "saldo": conta.data().saldo
             }
             updateTable(contaJSON)
         });
@@ -53,20 +55,25 @@ function updateTable(conta){
     const tdNome = document.createElement("TD")
     const tdTipoConta = document.createElement("TD")
     const tdMoeda = document.createElement("TD")
+    const tdSaldo = document.createElement("TD")
     const btnExcluir = document.createElement("BUTTON")
     const btnAtualizar = document.createElement("BUTTON")
     btnExcluir.innerText = "Exluir"
+    btnExcluir.classList.add("btn-table")
     btnAtualizar.innerText = "Alterar"
+    btnAtualizar.classList.add("btn-table")
     tdId.className = conta.id
     tdNome.className = conta.id
     tdId.innerText = conta.id
     tdNome.innerText = conta.nome 
     tdTipoConta.innerText = conta.tipoConta
     tdMoeda.innerText = conta.moeda
+    tdSaldo.innerText = conta.saldo
     tr.appendChild(tdId)
     tr.appendChild(tdNome)
     tr.appendChild(tdTipoConta)
     tr.appendChild(tdMoeda)
+    tr.appendChild(tdSaldo)
     tr.appendChild(btnAtualizar)
     tr.appendChild(btnExcluir)
     tableContas.appendChild(tr)
@@ -82,6 +89,7 @@ function updateTable(conta){
         nomeNovaConta.value = conta.nome
         tipoContaNovaConta.value = conta.tipoConta
         moedaNovaConta.value = conta.moeda
+        saldoNovaConta.value = conta.saldo
         nomeNovaConta.focus()
 
         const btnAtualizarContas = document.createElement("BUTTON")
@@ -91,12 +99,14 @@ function updateTable(conta){
             const contaJSON = {
                 "nome": nomeNovaConta.value,
                 "tipoConta": tipoContaNovaConta.value,
-                "moeda": moedaNovaConta.value
+                "moeda": moedaNovaConta.value,
+                "saldo": saldoNovaConta.value
             }
             atualizaConta(firebase.auth().currentUser.uid, conta.id, contaJSON)
             tdNome.innerText = nomeNovaConta.value
             tdMoeda.innerText = moedaNovaConta.value
             tdTipoConta.innerText = tipoContaNovaConta.value
+            tdSaldo.innerText = saldoNovaConta.value
             cancelar(btnAtualizarContas)
             
         })
@@ -119,7 +129,8 @@ btnCadastrar.addEventListener("click", () => {
     const contaJSON = {
         "nome": nomeNovaConta.value,
         "tipoConta": tipoContaNovaConta.value,
-        "moeda": moedaNovaConta.value
+        "moeda": moedaNovaConta.value,
+        "saldo": saldoNovaConta.value
     }
     criarConta(firebase.auth().currentUser.uid, contaJSON)
     .then((conta) => {
@@ -129,6 +140,9 @@ btnCadastrar.addEventListener("click", () => {
         alert(error.message)
     })
     nomeNovaConta.innerText = ""
+    saldoNovaConta.innerText = ""
+    tipoContaNovaConta.value = "CC"
+    moedaNovaConta.value = "BRL"
 })
 
 function cancelar(btnAtualizarContas){
@@ -139,6 +153,7 @@ function cancelar(btnAtualizarContas){
     nomeNovaConta.value = ""
     tipoContaNovaConta.value = "CC"
     moedaNovaConta.value = "BRL"
+    saldoNovaConta.value = ""
     for(var i = 0; i < tableButtons.length; i++){
         tableButtons[i].classList.remove("disabled-button")
     }
