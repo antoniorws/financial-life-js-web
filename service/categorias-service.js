@@ -79,7 +79,9 @@ function updateTable(idMovimentacao, nomeMovimentacao, table, categoria){
     const btnCategoriaExcluir = document.createElement("BUTTON")
     const btnCategoriaAtualizar = document.createElement("BUTTON")
     btnCategoriaExcluir.innerText = "Exluir"
+    btnCategoriaExcluir.classList.add("btn-table")
     btnCategoriaAtualizar.innerText = "Alterar"
+    btnCategoriaAtualizar.classList.add("btn-table")
     tdId.className = idMovimentacao
     tdNome.className = idMovimentacao
     tdId.innerText = idMovimentacao
