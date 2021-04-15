@@ -21,6 +21,7 @@ function excluirConta(uid, idConta){
 /**
  * 
  * @param {String} uid 
+ * @param {String} idConta
  * @param {JSON} conta 
  * @description Atualiza uma conta
  */
