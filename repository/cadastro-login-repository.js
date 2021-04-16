@@ -1,11 +1,11 @@
-function createUser(email, password){
+function createUser(email, password, name){
     firebase.auth().createUserWithEmailAndPassword(email, password)
     .then((user) => {
         const uid = user.user.uid;
         const users = firestore.collection("users");
         users.doc(uid).set({
-            email: inputEmail.value,
-            nome : inputName.value
+            email: email,
+            nome : name
         })
         alert("Cadastro realizado com sucesso!");
     })
