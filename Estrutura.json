@@ -3,31 +3,35 @@
             {
             "nome":"Antonio",
             "email":"rodrigowserra@gmail.com",
-            "conta":[
+            "contas":[
                 {
                     "id": "1",
                     "nome": "Nubank",
                     "tipoConta" : "cc",
                     "moeda": "brl",
                     "saldo": 500,
-                    "movimentacoes":
+                    "despesas":
                     [  
                         {
                         "id": 1,
                         "nome":"Celular",
                         "valor": 67.4,
                         "data": "2021-03-10",
-                        "tipo": "D",
-                        "categoria":"Celular"
+                        "categoria":"Celular",
+                        "evetivada": "N"
                         },
                         {
                         "id": 2,    
                         "nome":"Supermercado",
                         "valor": 210.5,
                         "data": "2021-03-3",
-                        "tipo": "D",
-                        "categoria": "Alimentação"
+                        "categoria": "Alimentação",
+                        "evetivada": "S"
                         }
+                    ],
+                    "receitas":
+                    [
+
                     ]
                 },
                 {
@@ -36,23 +40,27 @@
                     "tipoConta" : "cc",
                     "moeda": "eur",
                     "saldo": 200,
-                    "movimentacoes":
+                    "despesas":
                     [  
                         {
                         "id": 1,
                         "nome":"Restaurante",
                         "valor": 50,
                         "data": "2021-03-20",
-                        "tipo": "D",
-                        "categoria": "Alimentação Lazer"
-                        },
+                        "categoria": "Alimentação Lazer",
+                        "evetivada": "S"
+                        }
+                    ],
+                    "receitas":
+                    [
                         {
                         "id": 2,
                         "nome":"Adentis",
                         "valor": 5000,
                         "data": "2021-03-1",
                         "tipo": "R",
-                        "categoria" : "Salário"
+                        "categoria" : "Salário",
+                        "recebida": "S"
                         }
                     ]
                 }
