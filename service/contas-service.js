@@ -13,11 +13,19 @@ const btnCancelar = document.querySelector("#cancelaAtualizacao")
 function verificaUser(){
     firebase.auth().onAuthStateChanged( (user) => {
         if (user) {
-            getAllContas()
+            init()
         } else {
             console.log('Usuário não logado')
         }
     });
+}
+
+/**
+ * @description Inicia os métodos
+ */
+function init(){
+    document.querySelector("#nav-contas").classList.add("principal")
+    getAllContas()
 }
 
 /**

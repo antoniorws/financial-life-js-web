@@ -15,13 +15,18 @@
     <title>Categorias</title>
 </head>
 <body>
-    <div class="topnav">
-        <a class="active" href="./dashboard.html">Home</a>
-        <a href="categorias.html">Categorias</a>
-        <a href="contas.html">Contas</a>
-    </div>
+    <header class="topnav">
+        <a id="nav-home" href="./dashboard.html">Home</a>
+        <nav>
+            <a id="nav-categorias" href="categorias.html">Categorias</a>
+            <a id="nav-contas" href="contas.html">Contas</a>
+            <a id="nav-receitas" href="contas.html">Receitas</a>
+            <a id="nav-despesas" href="contas.html">Despesas</a>
+        </nav>
+        <a id="nav-sair" href="./dashboard.html">Sair</a>
+    </header>
     <div class="div-despesas">
-        <h1 class="alinhar-horizontal">Despesas</h1>
+        <h3>Despesas</h3>
         <input type="text" placeholder="Nome da Categoria" id="novaCategoriaDespesa">
         <button id="cadastrarDespesa">Cadastrar</button>
         <br>
@@ -35,7 +40,7 @@
         </table>
     </div>
     <div class="div-receitas">
-        <h1>Receitas</h1>
+        <h3>Receitas</h3>
         <input type="text" placeholder="Nome da Categoria" id="novaCategoriaReceita">
         <button id="cadastrarReceita">Cadastrar</button>
         <br>
