@@ -11,12 +11,20 @@ const tableReceitas = document.querySelector("#table-receitas")
 function verificaUser(){
     firebase.auth().onAuthStateChanged(function(user) {
         if (user) {
-            carregaCategoriasReceitas()
-            carregaCategoriasDespesas()
+            init()
         } else {
             console.log('Usuário não logado')
         }
     });
+}
+
+/**
+ * @description inicia os métodos para a tela
+ */
+function init(){
+    document.querySelector("#nav-categorias").classList.add("principal")
+    carregaCategoriasReceitas()
+    carregaCategoriasDespesas()
 }
 
 function carregaCategoriasDespesas(){
