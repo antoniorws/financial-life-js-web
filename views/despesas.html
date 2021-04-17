@@ -11,6 +11,8 @@
     <script src="https://www.gstatic.com/firebasejs/8.2.10/firebase-auth.js"></script>
     <script src="../config/firebaseconfig.js"></script>
     <script src="../repository/despesas-repository.js" defer="defer"></script>
+    <script src="../repository/contas-repository.js" defer="defer"></script>
+    <script src="../repository/categorias-repository.js" defer="defer"></script>
     <script src="../service/despesas-service.js" defer="defer"></script>
     <title>Contas</title>
 </head>
@@ -25,12 +27,16 @@
         </nav>
         <a id="nav-sair" href="./dashboard.html">Sair</a>
     </header>
-    <div class="div-contas">
+    <div class="div-despesas">
         <div id="div-novos-dados">
+            <h3>Cadastro:</h4> 
             <input  type="text" placeholder="Nome da Despesa" id="nomeNovaDespesa">
             <input id="dateDespesa" type="date">
-            <select id="categoria">
+            <select id="categoriaNovaDespesa">
                 <option value="" selected>Categoria da Despesa</option>
+            </select>
+            <select id="contaNovaDespesa">
+                <option value="" selected>Conta da Despesa</option>
             </select>
             <input  type="number" placeholder="Valor" id="valorNovaDespesa">
             <select id="efetivada">
@@ -43,8 +49,11 @@
         <div class="div-filtro">
             <h3>Filtros:</h4> 
             <input id="dateDespesaFiltro" placeholder="Mês do Filtro" type="month">
-            <select id="categoria">
+            <select id="categoriaFiltro">
                 <option value="" selected>Filtro por Categoria</option>
+            </select>
+            <select id="contaFiltro">
+                <option value="" selected>Filtro por Conta</option>
             </select>
         </div>
         <br/>
@@ -55,6 +64,7 @@
                 <th>Nome</th>
                 <th>Data</th>
                 <th>Categoria</th>
+                <th>Conta</th>
                 <th>Valor</th>
                 <th>Efetivada?</th>
                 <th></th>
