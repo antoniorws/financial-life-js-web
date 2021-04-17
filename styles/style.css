@@ -120,7 +120,7 @@ body{
    font-size: large;
 }
 
-.div-contas{
+.div-contas, .div-despesas{
    margin: 20px;
 }
 

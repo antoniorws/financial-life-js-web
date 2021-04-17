@@ -1,7 +1,9 @@
 {
     "users":[
-            {
+        {
+            "id": "123456",
             "nome":"Antonio",
+            "senha": "22kfjfdodsdf",
             "email":"rodrigowserra@gmail.com",
             "contas":[
                 {
@@ -9,60 +11,67 @@
                     "nome": "Nubank",
                     "tipoConta" : "cc",
                     "moeda": "brl",
-                    "saldo": 500,
-                    "despesas":
-                    [  
-                        {
-                        "id": 1,
-                        "nome":"Celular",
-                        "valor": 67.4,
-                        "data": "2021-03-10",
-                        "categoria":"Celular",
-                        "evetivada": "N"
-                        },
-                        {
-                        "id": 2,    
-                        "nome":"Supermercado",
-                        "valor": 210.5,
-                        "data": "2021-03-3",
-                        "categoria": "Alimentação",
-                        "evetivada": "S"
-                        }
-                    ],
-                    "receitas":
-                    [
-
-                    ]
+                    "saldo": 500
                 },
                 {
                     "id": "2",
                     "nome": "N26",
                     "tipoConta" : "cc",
                     "moeda": "eur",
-                    "saldo": 200,
-                    "despesas":
-                    [  
-                        {
-                        "id": 1,
-                        "nome":"Restaurante",
-                        "valor": 50,
-                        "data": "2021-03-20",
-                        "categoria": "Alimentação Lazer",
-                        "evetivada": "S"
-                        }
-                    ],
-                    "receitas":
-                    [
-                        {
-                        "id": 2,
-                        "nome":"Adentis",
-                        "valor": 5000,
-                        "data": "2021-03-1",
-                        "tipo": "R",
-                        "categoria" : "Salário",
-                        "recebida": "S"
-                        }
-                    ]
+                    "saldo": 200
+                }
+            ],
+            "despesas":[  
+                {
+                    "id": 1,
+                    "nome":"Celular",
+                    "valor": 67.4,
+                    "data": "2021-03-10",
+                    "categoria":"Celular",
+                    "evetivada": "N",
+                    "conta": {
+                        "id": "1",
+                        "nome": "Nubank"
+                    }
+                },
+                {
+                    "id": 2,    
+                    "nome":"Supermercado",
+                    "valor": 210.5,
+                    "data": "2021-03-3",
+                    "categoria": "Alimentação",
+                    "evetivada": "S",
+                    "conta": {
+                        "id": "1",
+                        "nome": "Nubank"
+                    }
+                },
+                {
+                    "id": 1,
+                    "nome":"Restaurante",
+                    "valor": 50,
+                    "data": "2021-03-20",
+                    "categoria": "Alimentação Lazer",
+                    "evetivada": "S",
+                    "conta": {
+                        "id": "2",
+                        "nome": "N26"
+                    }
+                }
+            ],
+            "receitas":[
+                {
+                    "id": 2,
+                    "nome":"Adentis",
+                    "valor": 5000,
+                    "data": "2021-03-1",
+                    "tipo": "R",
+                    "categoria" : "Salário",
+                    "recebida": "S",
+                    "conta":{
+                        "id": "2",
+                        "nome": "N26"
+                    }
                 }
             ],
             "categorias-despesas":[
