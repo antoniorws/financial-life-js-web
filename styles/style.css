@@ -106,7 +106,8 @@ body{
 .topnav {
    overflow: hidden;
    width: 100%;
-   text-align: center;
+   margin-left: 5px;
+
 }
  
 /* Style the links inside the navigation bar */
@@ -142,6 +143,7 @@ nav {
 .topnav a:hover {
    color: rgb(34, 133, 34);
    font-size: larger;
+   text-decoration: none;
 }
 
 .div-content{
@@ -173,11 +175,19 @@ h3{
    color: #495057;
 }
 
-.div-despesas, .div-receitas{
-   border-bottom-width: 0.5px;
-   border-bottom-style: solid;
-   border-bottom-color: #495057;
-}
+.div-despesas{
+
+      border-bottom-width: 0.5px;
+      border-bottom-style: solid;
+      border-bottom-color: #495057;
+   }
+
+.div-receitas{
+      border-bottom-width: 0.5px;
+      border-bottom-style: solid;
+      border-bottom-color: #495057;
+      margin-left: 20px;
+   }  
 
 input, select{
    border-bottom-right-radius: 0;
