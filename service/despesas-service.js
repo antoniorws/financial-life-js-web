@@ -1,6 +1,13 @@
+const btnCadastrar = document.querySelector("#cadastrarDespesa")
 const tableDespesas = document.querySelector("#tableDespesas")
+//Nova despesa
+const nomeNovaDespesa = document.querySelector("#nomeNovaDespesa")
+const dateNovaDespesa = document.querySelector("#dateNovaDespesa")
 const categoriaNovaDespesa = document.querySelector("#categoriaNovaDespesa")
 const contaNovaDespesa = document.querySelector("#contaNovaDespesa")
+const valorNovaDespesa = document.querySelector("#valorNovaDespesa")
+const efetivadaNovaDespesa = document.querySelector("#efetivadaNovaDespesa")
+//filtro
 const categoriaFiltro = document.querySelector("#categoriaFiltro")
 const contaFiltro = document.querySelector("#contaFiltro")
 
@@ -83,6 +90,33 @@ function preencheComboContas(){
         alert(error.message);
     })
 }
+
+btnCadastrar.addEventListener("click", () => {
+    const despesaJSON = {
+        "nome": nomeNovaDespesa.value,
+        "data": dateNovaDespesa.value,
+        "categoria": categoriaNovaDespesa.value,
+        "conta": {
+            "id": contaNovaDespesa.value,
+            "nome": contaNovaDespesa.selectedOptions[0].innerText
+        },
+        "valor": valorNovaDespesa.value,
+        "efetivada": efetivadaNovaDespesa.value
+    }
+    criarDespesa(firebase.auth().currentUser.uid, despesaJSON)
+    .then((despesa) => {
+        despesaJSON.id = despesa.id
+        //updateTable(contaJSON)
+    }).catch(error => {
+        alert(error.message)
+    })
+    nomeNovaDespesa.value = ""
+    dateNovaDespesa.innerText = ""
+    categoriaNovaDespesa.value = ""
+    contaNovaDespesa.value = ""
+    valorNovaDespesa.value = ""
+    efetivadaNovaDespesa.value = "N"
+})
 
 //MAIN
 
