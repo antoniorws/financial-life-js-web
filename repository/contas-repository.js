@@ -32,8 +32,35 @@ function atualizaConta(uid, idConta, conta){
 /**
  * 
  * @param {String} uid 
+ * @param {String} idConta
+ * @param {float} saldo 
+ * @description Atualiza uma conta
+ */
+ function atualizaSaldoConta(uid, idConta, saldo){
+    firestore.doc("users/" + uid + "/contas/" + idConta)
+    .update({
+        "saldo": saldo
+    }).then(() =>{
+        console.log("Conta atualizada com sucesso!")
+    }).catch(error =>{
+        console.log(error.mesage)
+    })
+}
+
+/**
+ * 
+ * @param {String} uid 
  * @returns Todas as contas do usuário
  */
 function getContas(uid){
     return firestore.collection("users/" + uid + "/contas").get()   
+}
+
+/**
+ * 
+ * @param {String} uid 
+ * @returns Uma conta
+ */
+ function getConta(uid, idConta){
+    return firestore.doc("users/" + uid + "/contas/" + idConta).get()   
 }

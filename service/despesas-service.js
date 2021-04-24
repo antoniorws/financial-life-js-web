@@ -28,7 +28,10 @@ function init(){
     document.querySelector("#nav-despesas").classList.add("principal")
     preencheComboCategorias()
     preencheComboContas()
+    getAllDespesas()
 }
+
+
 
 function preencheComboCategorias(){
     const response = getCategoriasDeDespesa(firebase.auth().currentUser.uid)
@@ -83,13 +86,61 @@ function preencheComboContas(){
                 "valor": despesa.data().valor,
                 "efetivada": despesa.data().efetivada === "S" ? "Sim" : "Não"
             }
-            //TODO
-            //updateTable(despesaJSON)
+            updateTable(despesaJSON)
         });
     }).catch(error =>{
         alert(error.message);
     })
 }
+
+/**
+ * 
+ * @param {JSON} despesa 
+ * @description Carrega a table
+ */
+ function updateTable(despesa){
+    const tr = document.createElement("TR")
+    const tdId = document.createElement("TD")
+    const tdNome = document.createElement("TD")
+    const tdData = document.createElement("TD")
+    const tdCategoria = document.createElement("TD")
+    const tdConta = document.createElement("TD")
+    const tdValor = document.createElement("TD")
+    const tdEfetivada = document.createElement("TD")
+    const btnExcluir = document.createElement("BUTTON")
+    const btnAtualizar = document.createElement("BUTTON")
+    const btnPagar = document.createElement("BUTTON")
+    
+    btnExcluir.innerText = "Exluir"
+    btnExcluir.classList.add("btn-table")
+    btnAtualizar.innerText = "Alterar"
+    btnAtualizar.classList.add("btn-table")
+    btnPagar.classList.add("btn-table")
+    btnPagar.innerText = "Pagar"
+
+    tdId.className = despesa.id
+    tdNome.className = despesa.id
+    tdId.innerText = despesa.id
+    tdNome.innerText = despesa.nome 
+    tdData.innerText = despesa.data
+    tdCategoria.innerText = despesa.categoria
+    tdConta.innerText = despesa.conta
+    tdValor.innerText = despesa.valor
+    tdEfetivada.innerText = despesa.efetivada
+
+    tr.appendChild(tdId)
+    tr.appendChild(tdNome)
+    tr.appendChild(tdData)
+    tr.appendChild(tdCategoria)
+    tr.appendChild(tdConta)
+    tr.appendChild(tdValor)
+    tr.appendChild(tdEfetivada)
+    tr.appendChild(btnAtualizar)
+    tr.appendChild(btnExcluir)
+    tr.appendChild(btnPagar)
+
+    tableDespesas.appendChild(tr)
+ }
 
 btnCadastrar.addEventListener("click", () => {
     const despesaJSON = {
@@ -106,17 +157,32 @@ btnCadastrar.addEventListener("click", () => {
     criarDespesa(firebase.auth().currentUser.uid, despesaJSON)
     .then((despesa) => {
         despesaJSON.id = despesa.id
-        //updateTable(contaJSON)
+        if(efetivadaNovaDespesa.value === 'S'){
+            getConta(firebase.auth().currentUser.uid, despesaJSON.conta.id)
+            .then(conta =>{
+                const novoSaldo = conta.data().saldo - despesaJSON.valor
+                atualizaSaldoConta(firebase.auth().currentUser.uid, conta.id, novoSaldo)
+            }).catch(error =>{
+                console.log(error.message)
+            })
+        }
+        limparCadastro()
+        despesaJSON.conta = despesaJSON.conta.nome
+        updateTable(despesaJSON)
     }).catch(error => {
         alert(error.message)
     })
+    
+})
+
+function limparCadastro(){
     nomeNovaDespesa.value = ""
     dateNovaDespesa.innerText = ""
     categoriaNovaDespesa.value = ""
     contaNovaDespesa.value = ""
     valorNovaDespesa.value = ""
     efetivadaNovaDespesa.value = "N"
-})
+}
 
 //MAIN
 
