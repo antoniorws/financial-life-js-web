@@ -10,6 +10,7 @@ const efetivadaNovaDespesa = document.querySelector("#efetivadaNovaDespesa")
 //filtro
 const categoriaFiltro = document.querySelector("#categoriaFiltro")
 const contaFiltro = document.querySelector("#contaFiltro")
+const dateFiltro = document.querySelector("#dateDespesaFiltro")
 
 /**
  * @description Verifica se existe usuário.
@@ -24,15 +25,26 @@ const contaFiltro = document.querySelector("#contaFiltro")
     });
 }
 
+/**
+ * @description Inicia os metódos para a página
+ */
 function init(){
     document.querySelector("#nav-despesas").classList.add("principal")
     preencheComboCategorias()
     preencheComboContas()
+    preencheDataAtual()
     getAllDespesas()
 }
 
+function preencheDataAtual(){
+    const dataHoje = new Date();
+    dateNovaDespesa.value = dataHoje.getFullYear() + "-0" + (dataHoje.getMonth() + 1) + "-" + dataHoje.getDate()
+    dateFiltro.value = dataHoje.getFullYear() + "-0" + (dataHoje.getMonth() + 1)
+}
 
-
+/**
+ * @description Preenche os combos de categorias
+ */
 function preencheComboCategorias(){
     const response = getCategoriasDeDespesa(firebase.auth().currentUser.uid)
     response.then(tiposDeDespesas => {
@@ -50,6 +62,9 @@ function preencheComboCategorias(){
     })
 }
 
+/**
+ * @description Preeche os combos de contas
+ */
 function preencheComboContas(){
     const response = getContas(firebase.auth().currentUser.uid)
     response.then(contas => {
@@ -77,15 +92,8 @@ function preencheComboContas(){
     const response = getDespesas(firebase.auth().currentUser.uid)
     response.then((despesas) => {
         despesas.forEach(despesa => {
-            const despesaJSON = {
-                "id": despesa.id,
-                "nome": despesa.data().nome,
-                "data": despesa.data().data,
-                "categoria": despesa.data().categoria,
-                "conta": despesa.data().conta.nome,
-                "valor": despesa.data().valor,
-                "efetivada": despesa.data().efetivada === "S" ? "Sim" : "Não"
-            }
+            const despesaJSON = despesa.data()
+            despesaJSON.id = despesa.id
             updateTable(despesaJSON)
         });
     }).catch(error =>{
@@ -124,9 +132,9 @@ function preencheComboContas(){
     tdNome.innerText = despesa.nome 
     tdData.innerText = despesa.data
     tdCategoria.innerText = despesa.categoria
-    tdConta.innerText = despesa.conta
+    tdConta.innerText = typeof despesa.conta === "string" ? despesa.conta : despesa.conta.nome
     tdValor.innerText = despesa.valor
-    tdEfetivada.innerText = despesa.efetivada
+    tdEfetivada.innerText = despesa.efetivada === "S" ? "Sim" : "Não"
 
     tr.appendChild(tdId)
     tr.appendChild(tdNome)
@@ -142,6 +150,9 @@ function preencheComboContas(){
     tableDespesas.appendChild(tr)
  }
 
+ /**
+  * @description Click do botão para cadastrar despesa
+  */
 btnCadastrar.addEventListener("click", () => {
     const despesaJSON = {
         "nome": nomeNovaDespesa.value,
@@ -167,7 +178,6 @@ btnCadastrar.addEventListener("click", () => {
             })
         }
         limparCadastro()
-        despesaJSON.conta = despesaJSON.conta.nome
         updateTable(despesaJSON)
     }).catch(error => {
         alert(error.message)
@@ -175,6 +185,9 @@ btnCadastrar.addEventListener("click", () => {
     
 })
 
+/**
+ * @description limpa os valores da parte de cadastro
+ */
 function limparCadastro(){
     nomeNovaDespesa.value = ""
     dateNovaDespesa.innerText = ""
