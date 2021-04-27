@@ -1,6 +1,8 @@
 const btnCadastrar = document.querySelector("#cadastrarDespesa")
+const btnCancelar = document.querySelector("#cancelaAtualizacao")
 const tableDespesas = document.querySelector("#tableDespesas")
 //Nova despesa
+const divNovosDados = document.querySelector("#div-novos-dados")
 const nomeNovaDespesa = document.querySelector("#nomeNovaDespesa")
 const dateNovaDespesa = document.querySelector("#dateNovaDespesa")
 const categoriaNovaDespesa = document.querySelector("#categoriaNovaDespesa")
@@ -117,14 +119,11 @@ function preencheComboContas(){
     const tdEfetivada = document.createElement("TD")
     const btnExcluir = document.createElement("BUTTON")
     const btnAtualizar = document.createElement("BUTTON")
-    const btnPagar = document.createElement("BUTTON")
     
     btnExcluir.innerText = "Exluir"
     btnExcluir.classList.add("btn-table")
     btnAtualizar.innerText = "Alterar"
     btnAtualizar.classList.add("btn-table")
-    btnPagar.classList.add("btn-table")
-    btnPagar.innerText = "Pagar"
 
     tdId.className = despesa.id
     tdNome.className = despesa.id
@@ -145,9 +144,59 @@ function preencheComboContas(){
     tr.appendChild(tdEfetivada)
     tr.appendChild(btnAtualizar)
     tr.appendChild(btnExcluir)
-    tr.appendChild(btnPagar)
+    
+    if(despesa.efetivada === "N"){
+        const btnPagar = document.createElement("BUTTON")
+        btnPagar.classList.add("btn-table")
+        btnPagar.innerText = "Pagar"
+        tr.appendChild(btnPagar)
+    }
 
     tableDespesas.appendChild(tr)
+
+    btnAtualizar.addEventListener("click", () => {
+        const tableButtons = document.querySelectorAll("table button")
+        for(var i = 0; i < tableButtons.length; i++){
+            tableButtons[i].classList.add("disabled-button")
+        }
+
+        btnCadastrar.classList.add("hidden-class")
+        btnCancelar.classList.remove("hidden-class")
+        nomeNovaDespesa.value = despesa.nome
+        dateNovaDespesa.value = despesa.data
+        categoriaNovaDespesa.value = despesa.categoria
+        contaNovaDespesa.value = despesa.conta.id
+        valorNovaDespesa.value = despesa.valor
+        efetivadaNovaDespesa.value = despesa.efetivada
+        nomeNovaDespesa.focus()
+
+        const btnAtualizarContas = document.createElement("BUTTON")
+        btnAtualizarContas.innerText = "Atualizar"
+        divNovosDados.appendChild(btnAtualizarContas)
+        btnAtualizarContas.addEventListener("click", () => {
+            const despesaJSON = {
+                "nome": nomeNovaDespesa.value,
+                "data": dateNovaDespesa.value,
+                "categoria": categoriaNovaDespesa.value,
+                "conta": {
+                    "id": contaNovaDespesa.value,
+                    "nome": contaNovaDespesa.selectedOptions[0].innerText
+                },
+                "valor": valorNovaDespesa.value,
+                "efetivada": efetivadaNovaDespesa.value
+            }
+            atualizaDespesa(firebase.auth().currentUser.uid, despesa.id, despesaJSON)
+            //TODO validar despesa efetivada
+            //TODO realizar set na tabela html
+            cancelar(btnAtualizarContas)
+            
+        })
+
+        btnCancelar.addEventListener("click", () => {
+            cancelar(btnAtualizarContas)
+        })
+    })
+
  }
 
  /**
@@ -195,6 +244,18 @@ function limparCadastro(){
     contaNovaDespesa.value = ""
     valorNovaDespesa.value = ""
     efetivadaNovaDespesa.value = "N"
+    
+}
+
+function cancelar(btnAtualizarContas){
+    const tableButtons = document.querySelectorAll("table button")
+    btnCadastrar.classList.remove("hidden-class")
+    btnAtualizarContas.remove()
+    btnCancelar.classList.add("hidden-class")
+    for(var i = 0; i < tableButtons.length; i++){
+        tableButtons[i].classList.remove("disabled-button")
+    }
+    limparCadastro()
 }
 
 //MAIN
