@@ -31,7 +31,8 @@
                     "evetivada": "N",
                     "conta": {
                         "id": "1",
-                        "nome": "Nubank"
+                        "nome": "Nubank",
+                        "moeda": "brl"
                     }
                 },
                 {
@@ -43,7 +44,8 @@
                     "evetivada": "S",
                     "conta": {
                         "id": "1",
-                        "nome": "Nubank"
+                        "nome": "Nubank",
+                        "moeda": "brl"
                     }
                 },
                 {
@@ -55,7 +57,8 @@
                     "evetivada": "S",
                     "conta": {
                         "id": "2",
-                        "nome": "N26"
+                        "nome": "N26",
+                        "moeda": "eur"
                     }
                 }
             ],
@@ -70,7 +73,8 @@
                     "recebida": "S",
                     "conta":{
                         "id": "2",
-                        "nome": "N26"
+                        "nome": "N26",
+                        "moeda": "eur"
                     }
                 }
             ],
