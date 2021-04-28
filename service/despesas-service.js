@@ -16,8 +16,8 @@ const dateFiltro = document.querySelector("#dateDespesaFiltro")
 
 /**
  * @description Verifica se existe usuário.
- */
- function verificaUser(){
+*/
+function verificaUser(){
     firebase.auth().onAuthStateChanged( (user) => {
         if (user) {
             init()
@@ -72,7 +72,7 @@ function preencheComboContas(){
     response.then(contas => {
         contas.forEach(conta => {
             const option = document.createElement("option")
-            option.value = conta.id
+            option.value = conta.id + "--"+conta.data().moeda
             option.innerText = conta.data().nome
             contaNovaDespesa.appendChild(option)
             const optionFiltro = document.createElement("option")
@@ -110,7 +110,6 @@ function preencheComboContas(){
  */
  function updateTable(despesa){
     const tr = document.createElement("TR")
-    const tdId = document.createElement("TD")
     const tdNome = document.createElement("TD")
     const tdData = document.createElement("TD")
     const tdCategoria = document.createElement("TD")
@@ -125,17 +124,22 @@ function preencheComboContas(){
     btnAtualizar.innerText = "Alterar"
     btnAtualizar.classList.add("btn-table")
 
-    tdId.className = despesa.id
-    tdNome.className = despesa.id
-    tdId.innerText = despesa.id
     tdNome.innerText = despesa.nome 
     tdData.innerText = despesa.data
     tdCategoria.innerText = despesa.categoria
     tdConta.innerText = typeof despesa.conta === "string" ? despesa.conta : despesa.conta.nome
-    tdValor.innerText = despesa.valor
-    tdEfetivada.innerText = despesa.efetivada === "S" ? "Sim" : "Não"
+    let simboloMoeda = ""
+    if(despesa.conta.moeda != undefined && despesa.conta.moeda != null){
+        if(despesa.conta.moeda === "BRL"){
+            simboloMoeda = "R$ "
+        }else if(despesa.conta.moeda === "EUR"){
+            simboloMoeda = "€ "
+        }else if(despesa.conta.moeda === "USD"){
+            simboloMoeda = "$ "
+        }
+    }
 
-    tr.appendChild(tdId)
+    tdValor.innerText = simboloMoeda + despesa.valor
     tr.appendChild(tdNome)
     tr.appendChild(tdData)
     tr.appendChild(tdCategoria)
@@ -149,7 +153,9 @@ function preencheComboContas(){
         const btnPagar = document.createElement("BUTTON")
         btnPagar.classList.add("btn-table")
         btnPagar.innerText = "Pagar"
-        tr.appendChild(btnPagar)
+        tdEfetivada.appendChild(btnPagar)
+    }else{
+        tdEfetivada.innerText = "Efetivada"
     }
 
     tableDespesas.appendChild(tr)
@@ -159,7 +165,7 @@ function preencheComboContas(){
         for(var i = 0; i < tableButtons.length; i++){
             tableButtons[i].classList.add("disabled-button")
         }
-
+        efetivadaNovaDespesa.classList.add("hidden-class")
         btnCadastrar.classList.add("hidden-class")
         btnCancelar.classList.remove("hidden-class")
         nomeNovaDespesa.value = despesa.nome
@@ -174,17 +180,8 @@ function preencheComboContas(){
         btnAtualizarContas.innerText = "Atualizar"
         divNovosDados.appendChild(btnAtualizarContas)
         btnAtualizarContas.addEventListener("click", () => {
-            const despesaJSON = {
-                "nome": nomeNovaDespesa.value,
-                "data": dateNovaDespesa.value,
-                "categoria": categoriaNovaDespesa.value,
-                "conta": {
-                    "id": contaNovaDespesa.value,
-                    "nome": contaNovaDespesa.selectedOptions[0].innerText
-                },
-                "valor": valorNovaDespesa.value,
-                "efetivada": efetivadaNovaDespesa.value
-            }
+             
+            const despesaJSON = getDespesaJson()
             atualizaDespesa(firebase.auth().currentUser.uid, despesa.id, despesaJSON)
             //TODO validar despesa efetivada
             //TODO realizar set na tabela html
@@ -199,27 +196,33 @@ function preencheComboContas(){
 
  }
 
- /**
-  * @description Click do botão para cadastrar despesa
-  */
-btnCadastrar.addEventListener("click", () => {
-    const despesaJSON = {
+function getDespesaJson(){
+    const contaValue = contaNovaDespesa.value.split("--")
+    return {
         "nome": nomeNovaDespesa.value,
         "data": dateNovaDespesa.value,
         "categoria": categoriaNovaDespesa.value,
         "conta": {
-            "id": contaNovaDespesa.value,
-            "nome": contaNovaDespesa.selectedOptions[0].innerText
+            "id": contaValue[0],
+            "nome": contaNovaDespesa.selectedOptions[0].innerText,
+            "moeda": contaValue[1]
         },
         "valor": valorNovaDespesa.value,
         "efetivada": efetivadaNovaDespesa.value
     }
+ }
+
+ /**
+  * @description Click do botão para cadastrar despesa
+  */
+btnCadastrar.addEventListener("click", () => {
+    const despesaJSON = getDespesaJson()
     criarDespesa(firebase.auth().currentUser.uid, despesaJSON)
     .then((despesa) => {
         despesaJSON.id = despesa.id
-        if(efetivadaNovaDespesa.value === 'S'){
+        if(efetivadaNovaDespesa.value === "S"){
             getConta(firebase.auth().currentUser.uid, despesaJSON.conta.id)
-            .then(conta =>{
+            .then(conta => {
                 const novoSaldo = conta.data().saldo - despesaJSON.valor
                 atualizaSaldoConta(firebase.auth().currentUser.uid, conta.id, novoSaldo)
             }).catch(error =>{
@@ -248,6 +251,7 @@ function limparCadastro(){
 }
 
 function cancelar(btnAtualizarContas){
+    efetivadaNovaDespesa.classList.remove("hidden-class")
     const tableButtons = document.querySelectorAll("table button")
     btnCadastrar.classList.remove("hidden-class")
     btnAtualizarContas.remove()
