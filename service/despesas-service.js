@@ -154,6 +154,12 @@ function preencheComboContas(){
         btnPagar.classList.add("btn-table")
         btnPagar.innerText = "Pagar"
         tdEfetivada.appendChild(btnPagar)
+        btnPagar.addEventListener("click", () => {
+            despesa.efetivada = "S"
+            debitarDespesa(despesa)
+            atualizaDespesa(firebase.auth().currentUser.uid, despesa.id, despesa)
+            tdEfetivada.innerText = "Efetivada"
+        })
     }else{
         tdEfetivada.innerText = "Efetivada"
     }
@@ -194,6 +200,14 @@ function preencheComboContas(){
         })
     })
 
+    btnExcluir.addEventListener("click", () => {
+        if(despesa.efetivada === "S"){
+            creditarDespesa(despesa)
+        }
+        excluirDespesa(firebase.auth().currentUser.uid, despesa.id)
+        tr.remove()
+    })
+
  }
 
 function getDespesaJson(){
@@ -216,26 +230,54 @@ function getDespesaJson(){
   * @description Click do botão para cadastrar despesa
   */
 btnCadastrar.addEventListener("click", () => {
+    cadastrarDespesa()
+})
+
+/**
+ * @description Cadastrar despesa
+ */
+function cadastrarDespesa(){
     const despesaJSON = getDespesaJson()
     criarDespesa(firebase.auth().currentUser.uid, despesaJSON)
     .then((despesa) => {
         despesaJSON.id = despesa.id
         if(efetivadaNovaDespesa.value === "S"){
-            getConta(firebase.auth().currentUser.uid, despesaJSON.conta.id)
-            .then(conta => {
-                const novoSaldo = conta.data().saldo - despesaJSON.valor
-                atualizaSaldoConta(firebase.auth().currentUser.uid, conta.id, novoSaldo)
-            }).catch(error =>{
-                console.log(error.message)
-            })
+            debitarDespesa(despesaJSON)
         }
         limparCadastro()
         updateTable(despesaJSON)
     }).catch(error => {
         alert(error.message)
     })
-    
-})
+}
+
+/**
+ * @description Debita o valor da despesa do total da conta
+ * @param {Json} despesaJSON 
+ */
+function debitarDespesa(despesaJSON){
+    getConta(firebase.auth().currentUser.uid, despesaJSON.conta.id)
+    .then(conta => {
+        const novoSaldo = conta.data().saldo - despesaJSON.valor
+        atualizaSaldoConta(firebase.auth().currentUser.uid, conta.id, novoSaldo)
+    }).catch(error =>{
+        console.log(error.message)
+    })
+}
+
+/**
+ * @description Credita o valor da despesa do total da conta
+ * @param {Json} despesaJSON 
+ */
+ function creditarDespesa(despesaJSON){
+    getConta(firebase.auth().currentUser.uid, despesaJSON.conta.id)
+    .then(conta => {
+        const novoSaldo = parseFloat(conta.data().saldo) + parseFloat(despesaJSON.valor)
+        atualizaSaldoConta(firebase.auth().currentUser.uid, conta.id, novoSaldo)
+    }).catch(error =>{
+        console.log(error.message)
+    })
+}
 
 /**
  * @description limpa os valores da parte de cadastro
