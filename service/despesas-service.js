@@ -129,16 +129,14 @@ function preencheComboContas(){
     tdCategoria.innerText = despesa.categoria
     tdConta.innerText = typeof despesa.conta === "string" ? despesa.conta : despesa.conta.nome
     let simboloMoeda = ""
-    if(despesa.conta.moeda != undefined && despesa.conta.moeda != null){
-        if(despesa.conta.moeda === "BRL"){
-            simboloMoeda = "R$ "
-        }else if(despesa.conta.moeda === "EUR"){
-            simboloMoeda = "€ "
-        }else if(despesa.conta.moeda === "USD"){
-            simboloMoeda = "$ "
-        }
+    if(despesa.conta.moeda === "BRL"){
+        simboloMoeda = "R$ "
+    }else if(despesa.conta.moeda === "EUR"){
+        simboloMoeda = "€ "
+    }else if(despesa.conta.moeda === "USD"){
+        simboloMoeda = "$ "
     }
-
+    
     tdValor.innerText = simboloMoeda + despesa.valor
     tr.appendChild(tdNome)
     tr.appendChild(tdData)
@@ -150,18 +148,9 @@ function preencheComboContas(){
     tr.appendChild(btnExcluir)
     
     if(despesa.efetivada === "N"){
-        const btnPagar = document.createElement("BUTTON")
-        btnPagar.classList.add("btn-table")
-        btnPagar.innerText = "Pagar"
-        tdEfetivada.appendChild(btnPagar)
-        btnPagar.addEventListener("click", () => {
-            despesa.efetivada = "S"
-            debitarDespesa(despesa)
-            atualizaDespesa(firebase.auth().currentUser.uid, despesa.id, despesa)
-            tdEfetivada.innerText = "Efetivada"
-        })
+        btnPagar(tdEfetivada, despesa)
     }else{
-        tdEfetivada.innerText = "Efetivada"
+        btnEfetivada(tdEfetivada, despesa)
     }
 
     tableDespesas.appendChild(tr)
@@ -177,26 +166,39 @@ function preencheComboContas(){
         nomeNovaDespesa.value = despesa.nome
         dateNovaDespesa.value = despesa.data
         categoriaNovaDespesa.value = despesa.categoria
-        contaNovaDespesa.value = despesa.conta.id
+        contaNovaDespesa.value = despesa.conta.id + "--" + despesa.conta.moeda
         valorNovaDespesa.value = despesa.valor
         efetivadaNovaDespesa.value = despesa.efetivada
         nomeNovaDespesa.focus()
 
-        const btnAtualizarContas = document.createElement("BUTTON")
-        btnAtualizarContas.innerText = "Atualizar"
-        divNovosDados.appendChild(btnAtualizarContas)
-        btnAtualizarContas.addEventListener("click", () => {
-             
-            const despesaJSON = getDespesaJson()
-            atualizaDespesa(firebase.auth().currentUser.uid, despesa.id, despesaJSON)
-            //TODO validar despesa efetivada
-            //TODO realizar set na tabela html
-            cancelar(btnAtualizarContas)
+        const btnAtualizarDespesas = document.createElement("BUTTON")
+        btnAtualizarDespesas.innerText = "Atualizar"
+        divNovosDados.appendChild(btnAtualizarDespesas)
+        
+        btnAtualizarDespesas.addEventListener("click", () => {
+            despesa = getDespesaJson(despesa.id)
+            atualizaDespesa(firebase.auth().currentUser.uid, despesa.id, despesa)
+            tdNome.innerText = despesa.nome 
+            tdData.innerText = despesa.data
+            tdCategoria.innerText = despesa.categoria
+            tdConta.innerText = despesa.conta.nome
             
+            let simboloMoeda = ""
+
+            if(despesa.conta.moeda === "BRL"){
+                simboloMoeda = "R$ "
+            }else if(despesa.conta.moeda === "EUR"){
+                simboloMoeda = "€ "
+            }else if(despesa.conta.moeda === "USD"){
+                simboloMoeda = "$ "
+            }        
+            tdValor.innerText = simboloMoeda + despesa.valor
+            
+            cancelar(btnAtualizarDespesas)
         })
 
         btnCancelar.addEventListener("click", () => {
-            cancelar(btnAtualizarContas)
+            cancelar(btnAtualizarDespesas)
         })
     })
 
@@ -208,22 +210,61 @@ function preencheComboContas(){
         tr.remove()
     })
 
- }
+}
 
-function getDespesaJson(){
-    const contaValue = contaNovaDespesa.value.split("--")
-    return {
-        "nome": nomeNovaDespesa.value,
-        "data": dateNovaDespesa.value,
-        "categoria": categoriaNovaDespesa.value,
-        "conta": {
-            "id": contaValue[0],
-            "nome": contaNovaDespesa.selectedOptions[0].innerText,
-            "moeda": contaValue[1]
-        },
-        "valor": valorNovaDespesa.value,
-        "efetivada": efetivadaNovaDespesa.value
+function btnPagar(tdEfetivada, despesa){
+    const btnPagar = document.createElement("BUTTON")
+    btnPagar.classList.add("btn-table")
+    btnPagar.classList.add("btn-pagar")
+    btnPagar.innerText = "Pagar"
+    for (child of tdEfetivada.children){
+        child.remove();
     }
+    tdEfetivada.appendChild(btnPagar)
+    btnPagar.addEventListener("click", () => {
+        despesa.efetivada = "S"
+        debitarDespesa(despesa)
+        atualizaDespesa(firebase.auth().currentUser.uid, despesa.id, despesa)
+        btnEfetivada(tdEfetivada, despesa)
+    })
+}
+
+function btnEfetivada(tdEfetivada, despesa){
+    const btnEfetivada = document.createElement("BUTTON")
+    btnEfetivada.classList.add("btn-table")
+    btnEfetivada.innerText = "Efetivada"
+    for (child of tdEfetivada.children){
+        child.remove();
+    }
+    tdEfetivada.appendChild(btnEfetivada)
+    btnEfetivada.addEventListener("click", () => {
+        despesa.efetivada = "N"
+        creditarDespesa(despesa)
+        atualizaDespesa(firebase.auth().currentUser.uid, despesa.id, despesa)
+        btnPagar(tdEfetivada, despesa)
+    })
+}
+
+function getDespesaJson(id){
+    const contaValue = contaNovaDespesa.value.split("--")
+    const despesaJson = {"nome": nomeNovaDespesa.value,
+                        "data": dateNovaDespesa.value,
+                        "categoria": categoriaNovaDespesa.value,
+                        "conta": {
+                            "id": contaValue[0],
+                            "nome": contaNovaDespesa.selectedOptions[0].innerText,
+                            "moeda": contaValue[1]
+                        },
+                        "valor": valorNovaDespesa.value,
+                        "efetivada": efetivadaNovaDespesa.value
+                    }
+
+    if(id !== undefined){
+        despesaJson.id = id
+        return despesaJson
+    }
+    return despesaJson
+        
  }
 
  /**
@@ -292,11 +333,11 @@ function limparCadastro(){
     
 }
 
-function cancelar(btnAtualizarContas){
+function cancelar(btnAtualizarDespesas){
     efetivadaNovaDespesa.classList.remove("hidden-class")
     const tableButtons = document.querySelectorAll("table button")
     btnCadastrar.classList.remove("hidden-class")
-    btnAtualizarContas.remove()
+    btnAtualizarDespesas.remove()
     btnCancelar.classList.add("hidden-class")
     for(var i = 0; i < tableButtons.length; i++){
         tableButtons[i].classList.remove("disabled-button")
