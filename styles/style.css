@@ -254,3 +254,11 @@ button:hover {
 .btn-table{
    margin: 5px;
 }
+
+.btn-pagar{
+   background-color: #a11b11;
+}
+
+.btn-pagar:hover{
+   background-color: #e02214;
+}
