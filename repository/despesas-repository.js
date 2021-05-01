@@ -34,6 +34,6 @@ function atualizaDespesa(uid, idDespesa, despesa){
  * @param {String} uid 
  * @returns Todas as despesas do usuário
  */
-function getDespesas(uid){
-    return firestore.collection("users/" + uid + "/despesas").get()   
+function getDespesasMes(uid, anoMesStart, anoMesEnd){
+    return firestore.collection("users/" + uid + "/despesas").where("data", ">=", anoMesStart + "-01").where("data", "<", anoMesEnd + "-01").get()   
 }

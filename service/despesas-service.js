@@ -31,17 +31,20 @@ function verificaUser(){
  * @description Inicia os metódos para a página
  */
 function init(){
+    const dataHoje = new Date();
+    const dia = dataHoje.getDate().toString.length === 2 ? dataHoje.getDate() : "0" + dataHoje.getDate()
+    const mes = (dataHoje.getMonth() + 1).toString.length === 2 ? (dataHoje.getMonth() + 1) : "0" + (dataHoje.getMonth() + 1)
+    const ano = dataHoje.getFullYear()
     document.querySelector("#nav-despesas").classList.add("principal")
     preencheComboCategorias()
     preencheComboContas()
-    preencheDataAtual()
-    getAllDespesas()
+    preencheDataAtual(dia, mes, ano)
+    getAllDespesasMes(mes, ano)
 }
 
-function preencheDataAtual(){
-    const dataHoje = new Date();
-    dateNovaDespesa.value = dataHoje.getFullYear() + "-0" + (dataHoje.getMonth() + 1) + "-" + dataHoje.getDate()
-    dateFiltro.value = dataHoje.getFullYear() + "-0" + (dataHoje.getMonth() + 1)
+function preencheDataAtual(dia, mes, ano){
+    dateNovaDespesa.value = ano + "-" + mes + "-" + dia
+    dateFiltro.value = ano + "-" + mes
 }
 
 /**
@@ -87,11 +90,14 @@ function preencheComboContas(){
 /**
  * @description Carrega todas as despesas do usuário na table de despesas
  */
- function getAllDespesas(){
+ function getAllDespesasMes(mes, ano){
     while(tableDespesas.childNodes.length > 2){
         tableDespesas.removeChild(tableDespesas.lastChild);
     }
-    const response = getDespesas(firebase.auth().currentUser.uid)
+    const dataStart = ano + "-" + mes
+    const mesEnd = parseInt(mes) === 12 ? "01" : "0" + (parseInt(mes) + 1)
+    const dataEnd = ano + "-" + mesEnd
+    const response = getDespesasMes(firebase.auth().currentUser.uid, dataStart, dataEnd)
     response.then((despesas) => {
         despesas.forEach(despesa => {
             const despesaJSON = despesa.data()
@@ -102,6 +108,14 @@ function preencheComboContas(){
         alert(error.message);
     })
 }
+
+/**
+ * @description Filtro por mês de acordo com o dateFiltro
+ */
+dateFiltro.addEventListener("change", () => {
+    const dateFiltroSplit = dateFiltro.value.split("-")
+    getAllDespesasMes(dateFiltroSplit[1], dateFiltroSplit[0])
+})
 
 /**
  * 
@@ -212,6 +226,11 @@ function preencheComboContas(){
 
 }
 
+/**
+ * @description Pagar despesa
+ * @param {String} tdEfetivada 
+ * @param {JSON} despesa 
+ */
 function btnPagar(tdEfetivada, despesa){
     const btnPagar = document.createElement("BUTTON")
     btnPagar.classList.add("btn-table")
@@ -229,6 +248,11 @@ function btnPagar(tdEfetivada, despesa){
     })
 }
 
+/**
+ * @description Reembolsar despesa paga
+ * @param {String} tdEfetivada 
+ * @param {Json} despesa 
+ */
 function btnEfetivada(tdEfetivada, despesa){
     const btnEfetivada = document.createElement("BUTTON")
     btnEfetivada.classList.add("btn-table")
@@ -245,6 +269,11 @@ function btnEfetivada(tdEfetivada, despesa){
     })
 }
 
+/**
+ * 
+ * @param {String} id 
+ * @returns Json de Despesa
+ */
 function getDespesaJson(id){
     const contaValue = contaNovaDespesa.value.split("--")
     const despesaJson = {"nome": nomeNovaDespesa.value,
@@ -286,7 +315,9 @@ function cadastrarDespesa(){
             debitarDespesa(despesaJSON)
         }
         limparCadastro()
-        updateTable(despesaJSON)
+        if(dateNovaDespesa.value.includes(dateFiltro.value)){
+            updateTable(despesaJSON)
+        }
     }).catch(error => {
         alert(error.message)
     })
