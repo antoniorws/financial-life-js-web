@@ -31,15 +31,15 @@ function verificaUser(){
  * @description Inicia os metódos para a página
  */
 function init(){
+    const dataHoje = new Date();
     document.querySelector("#nav-despesas").classList.add("principal")
     preencheComboCategorias()
     preencheComboContas()
-    preencheDataAtual()
-    getAllDespesas()
+    preencheDataAtual(dataHoje)
+    getAllDespesasMes(dataHoje)
 }
 
-function preencheDataAtual(){
-    const dataHoje = new Date();
+function preencheDataAtual(dataHoje){
     const dia = dataHoje.getDate().toString.length === 2 ? dataHoje.getDate() : "0" + dataHoje.getDate()
     const mes = (dataHoje.getMonth() + 1).toString.length === 2 ? (dataHoje.getMonth() + 1) : "0" + (dataHoje.getMonth() + 1)
     const ano = dataHoje.getFullYear()
@@ -90,11 +90,16 @@ function preencheComboContas(){
 /**
  * @description Carrega todas as despesas do usuário na table de despesas
  */
- function getAllDespesas(){
+ function getAllDespesasMes(dataHoje){
     while(tableDespesas.childNodes.length > 2){
         tableDespesas.removeChild(tableDespesas.lastChild);
     }
-    const response = getDespesas(firebase.auth().currentUser.uid)
+    const mes = (dataHoje.getMonth() + 1).toString.length === 2 ? (dataHoje.getMonth() + 1) : "0" + (dataHoje.getMonth() + 1)
+    const ano = dataHoje.getFullYear()
+    const dataStart = ano + "-" + mes
+    const mesEnd = parseInt(mes) === 12 ? "01" : "0" + (parseInt(mes) + 1)
+    const dataEnd = ano + "-" + mesEnd
+    const response = getDespesasMes(firebase.auth().currentUser.uid, dataStart, dataEnd)
     response.then((despesas) => {
         despesas.forEach(despesa => {
             const despesaJSON = despesa.data()
