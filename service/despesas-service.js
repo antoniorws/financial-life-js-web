@@ -40,8 +40,11 @@ function init(){
 
 function preencheDataAtual(){
     const dataHoje = new Date();
-    dateNovaDespesa.value = dataHoje.getFullYear() + "-0" + (dataHoje.getMonth() + 1) + "-" + dataHoje.getDate()
-    dateFiltro.value = dataHoje.getFullYear() + "-0" + (dataHoje.getMonth() + 1)
+    const dia = dataHoje.getDate().toString.length === 2 ? dataHoje.getDate() : "0" + dataHoje.getDate()
+    const mes = (dataHoje.getMonth() + 1).toString.length === 2 ? (dataHoje.getMonth() + 1) : "0" + (dataHoje.getMonth() + 1)
+    const ano = dataHoje.getFullYear()
+    dateNovaDespesa.value = ano + "-" + mes + "-" + dia
+    dateFiltro.value = ano + "-" + mes
 }
 
 /**
