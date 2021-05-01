@@ -129,6 +129,7 @@ function updateTable(conta){
         if (response == true){
             tr.remove()
             excluirConta(firebase.auth().currentUser.uid, conta.id)
+            //TODO excluir despesas relacionadas a essa conta
         }
     })
 }
@@ -147,8 +148,8 @@ btnCadastrar.addEventListener("click", () => {
     }).catch(error => {
         alert(error.message)
     })
-    nomeNovaConta.innerText = ""
-    saldoNovaConta.innerText = ""
+    nomeNovaConta.value = ""
+    saldoNovaConta.value = ""
     tipoContaNovaConta.value = "CC"
     moedaNovaConta.value = "BRL"
 })
