@@ -68,7 +68,6 @@
                     "nome":"Adentis",
                     "valor": 5000,
                     "data": "2021-03-1",
-                    "tipo": "R",
                     "categoria" : "Salário",
                     "recebida": "S",
                     "conta":{
