@@ -42,6 +42,13 @@ function init(){
     getAllDespesasMes(mes, ano, "", "")
 }
 
+/**
+ * 
+ * @param {string} dia 
+ * @param {string} mes 
+ * @param {string} ano 
+ * @description preenche data atual 
+ */
 function preencheDataAtual(dia, mes, ano){
     dateNovaDespesa.value = ano + "-" + mes + "-" + dia
     dateFiltro.value = ano + "-" + mes
