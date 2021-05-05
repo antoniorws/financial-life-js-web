@@ -39,7 +39,7 @@ function init(){
     preencheComboCategorias()
     preencheComboContas()
     preencheDataAtual(dia, mes, ano)
-    getAllDespesasMes(mes, ano)
+    getAllDespesasMes(mes, ano, "", "")
 }
 
 function preencheDataAtual(dia, mes, ano){
@@ -90,14 +90,14 @@ function preencheComboContas(){
 /**
  * @description Carrega todas as despesas do usuário na table de despesas
  */
- function getAllDespesasMes(mes, ano){
+ function getAllDespesasMes(mes, ano, categoria, conta){
     while(tableDespesas.childNodes.length > 2){
         tableDespesas.removeChild(tableDespesas.lastChild);
     }
     const dataStart = ano + "-" + mes
     const mesEnd = parseInt(mes) === 12 ? "01" : "0" + (parseInt(mes) + 1)
     const dataEnd = ano + "-" + mesEnd
-    const response = getDespesasMes(firebase.auth().currentUser.uid, dataStart, dataEnd)
+    const response = getDespesasMes(firebase.auth().currentUser.uid, dataStart, dataEnd, categoria, conta)
     response.then((despesas) => {
         despesas.forEach(despesa => {
             const despesaJSON = despesa.data()
@@ -105,7 +105,7 @@ function preencheComboContas(){
             updateTable(despesaJSON)
         });
     }).catch(error =>{
-        alert(error.message);
+        console.log(error.message);
     })
 }
 
@@ -113,9 +113,30 @@ function preencheComboContas(){
  * @description Filtro por mês de acordo com o dateFiltro
  */
 dateFiltro.addEventListener("change", () => {
-    const dateFiltroSplit = dateFiltro.value.split("-")
-    getAllDespesasMes(dateFiltroSplit[1], dateFiltroSplit[0])
+    filtroPesquisa()
 })
+
+/**
+ * @description Filtro por categoria
+ */
+categoriaFiltro.addEventListener("change", () => {
+    filtroPesquisa()
+})
+
+/**
+ * @description Filtro por conta
+ */
+contaFiltro.addEventListener("change", () => {
+    filtroPesquisa()
+})
+
+/**
+ * @description Filtrar
+ */
+function filtroPesquisa(){
+    const dateFiltroSplit = dateFiltro.value.split("-")
+    getAllDespesasMes(dateFiltroSplit[1], dateFiltroSplit[0], categoriaFiltro.value, contaFiltro.value)
+}
 
 /**
  * 
