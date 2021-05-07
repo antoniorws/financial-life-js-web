@@ -219,24 +219,29 @@ function filtroPesquisa(){
         
         btnAtualizarDespesas.addEventListener("click", () => {
             despesa = getDespesaJson(despesa.id)
-            atualizaDespesa(firebase.auth().currentUser.uid, despesa.id, despesa)
-            tdNome.innerText = despesa.nome 
-            tdData.innerText = despesa.data
-            tdCategoria.innerText = despesa.categoria
-            tdConta.innerText = despesa.conta.nome
-            
-            let simboloMoeda = ""
+            if(despesa.conta.nome == tdConta.innerText &&
+                despesa.efetivada === "N"){
+                atualizaDespesa(firebase.auth().currentUser.uid, despesa.id, despesa)
+                tdNome.innerText = despesa.nome 
+                tdData.innerText = despesa.data
+                tdCategoria.innerText = despesa.categoria
+                tdConta.innerText = despesa.conta.nome
+                
+                let simboloMoeda = ""
 
-            if(despesa.conta.moeda === "BRL"){
-                simboloMoeda = "R$ "
-            }else if(despesa.conta.moeda === "EUR"){
-                simboloMoeda = "€ "
-            }else if(despesa.conta.moeda === "USD"){
-                simboloMoeda = "$ "
-            }        
-            tdValor.innerText = simboloMoeda + despesa.valor
-            
-            cancelar(btnAtualizarDespesas)
+                if(despesa.conta.moeda === "BRL"){
+                    simboloMoeda = "R$ "
+                }else if(despesa.conta.moeda === "EUR"){
+                    simboloMoeda = "€ "
+                }else if(despesa.conta.moeda === "USD"){
+                    simboloMoeda = "$ "
+                }        
+                tdValor.innerText = simboloMoeda + despesa.valor
+                
+                cancelar(btnAtualizarDespesas)
+            }else{
+                alert("Não possível alterar a conta de uma despesa já paga.\n Devolva a despesa para alterar a conta!")
+            }
         })
 
         btnCancelar.addEventListener("click", () => {

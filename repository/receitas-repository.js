@@ -25,7 +25,7 @@ function excluirReceita(uid, idReceita){
  * @param {JSON} receita 
  * @description Atualiza uma receita
  */
-function atualizareceita(uid, idReceita, receita){
+function atualizaReceita(uid, idReceita, receita){
     firestore.doc("users/" + uid + "/receitas/" + idReceita).set(receita)
 }
 
@@ -38,7 +38,7 @@ function atualizareceita(uid, idReceita, receita){
  * @param {String} conta 
  * @returns receitas do usuário
  */
-function getreceitasMes(uid, anoMesStart, anoMesEnd, categoria, conta){
+function getReceitasMes(uid, anoMesStart, anoMesEnd, categoria, conta){
     let research = firestore.collection("users/" + uid + "/receitas")
                                 .where("data", ">=", anoMesStart + "-01")
                                 .where("data", "<", anoMesEnd + "-01") 
