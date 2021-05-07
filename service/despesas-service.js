@@ -324,9 +324,9 @@ function getDespesaJson(id){
         
  }
 
- /**
-  * @description Click do botão para cadastrar despesa
-  */
+/**
+ * @description Click do botão para cadastrar despesa
+ */
 btnCadastrar.addEventListener("click", () => {
     cadastrarDespesa()
 })
@@ -347,7 +347,7 @@ function cadastrarDespesa(){
             updateTable(despesaJSON)
         }
     }).catch(error => {
-        alert(error.message)
+        console.log(error.message)
     })
 }
 
@@ -392,6 +392,10 @@ function limparCadastro(){
     
 }
 
+/**
+ * @description Cancela operação
+ * @param {BUTTON} btnAtualizarDespesas 
+ */
 function cancelar(btnAtualizarDespesas){
     efetivadaNovaDespesa.classList.remove("hidden-class")
     const tableButtons = document.querySelectorAll("table button")

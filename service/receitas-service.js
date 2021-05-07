@@ -94,4 +94,115 @@ function preencheDataAtual(dia, mes, ano){
     })
 }
 
+/**
+ * 
+ * @param {String} id 
+ * @returns Json de Receita
+ */
+ function getReceitaJson(id){
+    const contaValue = contaNovaReceita.value.split("--")
+    const receitaJson = {"nome": nomeNovaReceita.value,
+                        "data": dateNovaReceita.value,
+                        "categoria": categoriaNovaReceita.value,
+                        "conta": {
+                            "id": contaValue[0],
+                            "nome": contaNovaReceita.selectedOptions[0].innerText,
+                            "moeda": contaValue[1]
+                        },
+                        "valor": valorNovaReceita.value,
+                        "efetivada": recebidaNovaReceita.value
+                    }
+
+    if(id !== undefined){
+        receitaJson.id = id
+        return receitaJson
+    }
+    return receitaJson
+        
+ }
+
+/**
+ * @description Click do botão para cadastrar despesa
+ */
+btnCadastrar.addEventListener("click", () => {
+    cadastrarReceita()
+})
+
+/**
+ * @description Cadastrar receita
+ */
+ function cadastrarReceita(){
+    const receitaJSON = getReceitaJson()
+    criarReceita(firebase.auth().currentUser.uid, receitaJSON)
+    .then((receita) => {
+        receitaJSON.id = receita.id
+        if(recebidaNovaReceita.value === "S"){
+            creditarReceita(receitaJSON)
+        }
+        limparCadastro()
+        if(dateNovaReceita.value.includes(dateFiltro.value)){
+            //TODO
+            //updateTable(receitaJSON)
+        }
+    }).catch(error => {
+        console.log(error.message)
+    })
+}
+
+/**
+ * @description Debita o valor da receita do total da conta
+ * @param {Json} receitaJSON 
+ */
+ function debitarReceita(receitaJSON){
+    getConta(firebase.auth().currentUser.uid, receitaJSON.conta.id)
+    .then(conta => {
+        const novoSaldo = conta.data().saldo - receitaJSON.valor
+        atualizaSaldoConta(firebase.auth().currentUser.uid, conta.id, novoSaldo)
+    }).catch(error =>{
+        console.log(error.message)
+    })
+}
+
+/**
+ * @description Credita o valor da Receita do total da conta
+ * @param {Json} receitaJSON 
+ */
+ function creditarReceita(receitaJSON){
+    getConta(firebase.auth().currentUser.uid, receitaJSON.conta.id)
+    .then(conta => {
+        const novoSaldo = parseFloat(conta.data().saldo) + parseFloat(receitaJSON.valor)
+        atualizaSaldoConta(firebase.auth().currentUser.uid, conta.id, novoSaldo)
+    }).catch(error =>{
+        console.log(error.message)
+    })
+}
+
+/**
+ * @description limpa os valores da parte de cadastro
+ */
+ function limparCadastro(){
+    nomeNovaReceita.value = ""
+    dateNovaReceita.innerText = ""
+    categoriaNovaReceita.value = ""
+    contaNovaReceita.value = ""
+    valorNovaReceita.value = ""
+    recebidaNovaReceita.value = "N"   
+}
+
+/**
+ * @description Cancela operação
+ * @param {BUTTON} btnAtualizarDespesas 
+ */
+ function cancelar(btnAtualizarDespesas){
+    recebidaNovaReceita.classList.remove("hidden-class")
+    const tableButtons = document.querySelectorAll("table button")
+    btnCadastrar.classList.remove("hidden-class")
+    btnAtualizarDespesas.remove()
+    btnCancelar.classList.add("hidden-class")
+    for(var i = 0; i < tableButtons.length; i++){
+        tableButtons[i].classList.remove("disabled-button")
+    }
+    limparCadastro()
+}
+
 verificaUser()
