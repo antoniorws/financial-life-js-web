@@ -1,7 +1,7 @@
 const btnCadastrar = document.querySelector("#cadastrarReceita")
 const btnCancelar = document.querySelector("#cancelaAtualizacao")
 const tableReceitas = document.querySelector("#tableReceitas")
-//Nova despesa
+//Nova receita
 const divNovosDados = document.querySelector("#div-novos-dados")
 const nomeNovaReceita = document.querySelector("#nomeNovaReceita")
 const dateNovaReceita = document.querySelector("#dateNovaReceita")
@@ -39,7 +39,7 @@ function verificaUser(){
     preencheComboCategorias()
     preencheComboContas()
     preencheDataAtual(dia, mes, ano)
-    //getAllDespesasMes(mes, ano, "", "")
+    getAllReceitasMes(mes, ano, "", "")
 }
 
 /**
@@ -95,6 +95,223 @@ function preencheDataAtual(dia, mes, ano){
 }
 
 /**
+ * @description Filtro por mês de acordo com o dateFiltro
+ */
+ dateFiltro.addEventListener("change", () => {
+    filtroPesquisa()
+})
+
+/**
+ * @description Filtro por categoria
+ */
+categoriaFiltro.addEventListener("change", () => {
+    filtroPesquisa()
+})
+
+/**
+ * @description Filtro por conta
+ */
+contaFiltro.addEventListener("change", () => {
+    filtroPesquisa()
+})
+
+/**
+ * @description Filtrar
+ */
+function filtroPesquisa(){
+    const dateFiltroSplit = dateFiltro.value.split("-")
+    getAllReceitasMes(dateFiltroSplit[1], dateFiltroSplit[0], categoriaFiltro.value, contaFiltro.value)
+}
+
+/**
+ * @description Carrega todas as receitas do usuário na table de receitas
+ */
+ function getAllReceitasMes(mes, ano, categoria, conta){
+    while(tableReceitas.childNodes.length > 2){
+        tableReceitas.removeChild(tableReceitas.lastChild);
+    }
+    const dataStart = ano + "-" + mes
+    const mesEnd = parseInt(mes) === 12 ? "01" : "0" + (parseInt(mes) + 1)
+    const dataEnd = ano + "-" + mesEnd
+    const response = getReceitasMes(firebase.auth().currentUser.uid, dataStart, dataEnd, categoria, conta)
+    response.then((receitas) => {
+        receitas.forEach(receita => {
+            const receitaJSON = receita.data()
+            receitaJSON.id = receita.id
+            updateTable(receitaJSON)
+        });
+    }).catch(error =>{
+        console.log(error.message);
+    })
+}
+
+/**
+ * 
+ * @param {JSON} receita 
+ * @description Carrega a table
+ */
+ function updateTable(receita){
+    const tr = document.createElement("TR")
+    const tdNome = document.createElement("TD")
+    const tdData = document.createElement("TD")
+    const tdCategoria = document.createElement("TD")
+    const tdConta = document.createElement("TD")
+    const tdValor = document.createElement("TD")
+    const tdRecebida = document.createElement("TD")
+    const btnExcluir = document.createElement("BUTTON")
+    const btnAtualizar = document.createElement("BUTTON")
+    
+    btnExcluir.innerText = "Exluir"
+    btnExcluir.classList.add("btn-table")
+    btnAtualizar.innerText = "Alterar"
+    btnAtualizar.classList.add("btn-table")
+
+    tdNome.innerText = receita.nome 
+    tdData.innerText = receita.data
+    tdCategoria.innerText = receita.categoria
+    tdConta.innerText = typeof receita.conta === "string" ? receita.conta : receita.conta.nome
+    let simboloMoeda = ""
+    if(receita.conta.moeda === "BRL"){
+        simboloMoeda = "R$ "
+    }else if(receita.conta.moeda === "EUR"){
+        simboloMoeda = "€ "
+    }else if(receita.conta.moeda === "USD"){
+        simboloMoeda = "$ "
+    }
+    
+    tdValor.innerText = simboloMoeda + receita.valor
+    tr.appendChild(tdNome)
+    tr.appendChild(tdData)
+    tr.appendChild(tdCategoria)
+    tr.appendChild(tdConta)
+    tr.appendChild(tdValor)
+    tr.appendChild(tdRecebida)
+    tr.appendChild(btnAtualizar)
+    tr.appendChild(btnExcluir)
+    
+    if(receita.recebida === "N"){
+        btnReceber(tdRecebida, receita)
+    }else{
+        btnRecebida(tdRecebida, receita)
+    }
+
+    tableReceitas.appendChild(tr)
+
+    btnAtualizar.addEventListener("click", () => {
+        const tableButtons = document.querySelectorAll("table button")
+        for(var i = 0; i < tableButtons.length; i++){
+            tableButtons[i].classList.add("disabled-button")
+        }
+        recebidaNovaReceita.classList.add("hidden-class")
+        btnCadastrar.classList.add("hidden-class")
+        btnCancelar.classList.remove("hidden-class")
+        nomeNovaReceita.value = receita.nome
+        dateNovaReceita.value = receita.data
+        categoriaNovaReceita.value = receita.categoria
+        contaNovaReceita.value = receita.conta.id + "--" + receita.conta.moeda
+        valorNovaReceita.value = receita.valor
+        recebidaNovaReceita.value = receita.recebida
+        nomeNovaReceita.focus()
+
+        const btnAtualizarReceitas = document.createElement("BUTTON")
+        btnAtualizarReceitas.innerText = "Atualizar"
+        divNovosDados.appendChild(btnAtualizarReceitas)
+        
+        btnAtualizarReceitas.addEventListener("click", () => {
+            receita = getReceitaJson(receita.id)
+            getReceita(firebase.auth().currentUser.uid, receita.id)
+            .then(receitaDB => {
+
+                if(receita.conta.nome != receitaDB.data().conta.nome && 
+                    receitaDB.data().recebida === "S"){
+                    alert("Não possível alterar a conta de uma receita já recebida.\n Devolva a receita para alterar a conta!")
+                    
+                }else{
+                    atualizaReceita(firebase.auth().currentUser.uid, receita.id, receita)
+                    tdNome.innerText = receita.nome 
+                    tdData.innerText = receita.data
+                    tdCategoria.innerText = receita.categoria
+                    tdConta.innerText = receita.conta.nome
+                    
+                    let simboloMoeda = ""
+    
+                    if(receita.conta.moeda === "BRL"){
+                        simboloMoeda = "R$ "
+                    }else if(receita.conta.moeda === "EUR"){
+                        simboloMoeda = "€ "
+                    }else if(receita.conta.moeda === "USD"){
+                        simboloMoeda = "$ "
+                    }        
+                    tdValor.innerText = simboloMoeda + receita.valor
+                    
+                    cancelar(btnAtualizarReceitas)
+                }
+            }).catch(error => {
+                alert(error.mesage)
+            })
+        })
+
+        btnCancelar.addEventListener("click", () => {
+            cancelar(btnAtualizarReceitas)
+        })
+    })
+
+    btnExcluir.addEventListener("click", () => {
+        if(receita.recebida === "S"){
+            debitarReceita(receita)
+        }
+        excluirReceita(firebase.auth().currentUser.uid, receita.id)
+        tr.remove()
+    })
+
+}
+
+/**
+ * @description Receber receita
+ * @param {String} tdRecebida 
+ * @param {JSON} receita 
+ */
+ function btnReceber(tdRecebida, receita){
+    const btnReceber = document.createElement("BUTTON")
+    btnReceber.classList.add("btn-table")
+    btnReceber.classList.add("btn-pagar")
+    btnReceber.innerText = "Receber"
+    for (child of tdRecebida.children){
+        child.remove()
+    }
+    
+    tdRecebida.appendChild(btnReceber)
+    btnReceber.addEventListener("click", () => {
+        receita.recebida = "S"
+        creditarReceita(receita)
+        receberDevolverReceita(firebase.auth().currentUser.uid, receita.id, receita.recebida)
+        btnRecebida(tdRecebida, receita)
+    })
+}
+
+/**
+ * @description Devolver receita
+ * @param {String} tdRecebida 
+ * @param {Json} receita 
+ */
+ function btnRecebida(tdRecebida, receita){
+    const btnRecebida = document.createElement("BUTTON")
+    btnRecebida.classList.add("btn-table")
+    btnRecebida.innerText = "Recebida"
+    for (child of tdRecebida.children){
+        child.remove();
+    }
+    
+    tdRecebida.appendChild(btnRecebida)
+    btnRecebida.addEventListener("click", () => {
+        receita.recebida = "N"
+        debitarReceita(receita)
+        receberDevolverReceita(firebase.auth().currentUser.uid, receita.id, receita.recebida)
+        btnReceber(tdRecebida, receita)
+    })
+}
+
+/**
  * 
  * @param {String} id 
  * @returns Json de Receita
@@ -110,7 +327,7 @@ function preencheDataAtual(dia, mes, ano){
                             "moeda": contaValue[1]
                         },
                         "valor": valorNovaReceita.value,
-                        "efetivada": recebidaNovaReceita.value
+                        "recebida": recebidaNovaReceita.value
                     }
 
     if(id !== undefined){
@@ -122,7 +339,7 @@ function preencheDataAtual(dia, mes, ano){
  }
 
 /**
- * @description Click do botão para cadastrar despesa
+ * @description Click do botão para cadastrar receita
  */
 btnCadastrar.addEventListener("click", () => {
     cadastrarReceita()
@@ -141,8 +358,7 @@ btnCadastrar.addEventListener("click", () => {
         }
         limparCadastro()
         if(dateNovaReceita.value.includes(dateFiltro.value)){
-            //TODO
-            //updateTable(receitaJSON)
+            updateTable(receitaJSON)
         }
     }).catch(error => {
         console.log(error.message)
@@ -191,13 +407,13 @@ btnCadastrar.addEventListener("click", () => {
 
 /**
  * @description Cancela operação
- * @param {BUTTON} btnAtualizarDespesas 
+ * @param {BUTTON} btnAtualizarReceitas 
  */
- function cancelar(btnAtualizarDespesas){
+ function cancelar(btnAtualizarReceitas){
     recebidaNovaReceita.classList.remove("hidden-class")
     const tableButtons = document.querySelectorAll("table button")
     btnCadastrar.classList.remove("hidden-class")
-    btnAtualizarDespesas.remove()
+    btnAtualizarReceitas.remove()
     btnCancelar.classList.add("hidden-class")
     for(var i = 0; i < tableButtons.length; i++){
         tableButtons[i].classList.remove("disabled-button")

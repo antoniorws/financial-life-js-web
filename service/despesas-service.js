@@ -219,24 +219,37 @@ function filtroPesquisa(){
         
         btnAtualizarDespesas.addEventListener("click", () => {
             despesa = getDespesaJson(despesa.id)
-            atualizaDespesa(firebase.auth().currentUser.uid, despesa.id, despesa)
-            tdNome.innerText = despesa.nome 
-            tdData.innerText = despesa.data
-            tdCategoria.innerText = despesa.categoria
-            tdConta.innerText = despesa.conta.nome
             
-            let simboloMoeda = ""
+            getReceita(firebase.auth().currentUser.uid, receita.id)
+            .then(despesaDB => {
 
-            if(despesa.conta.moeda === "BRL"){
-                simboloMoeda = "R$ "
-            }else if(despesa.conta.moeda === "EUR"){
-                simboloMoeda = "€ "
-            }else if(despesa.conta.moeda === "USD"){
-                simboloMoeda = "$ "
-            }        
-            tdValor.innerText = simboloMoeda + despesa.valor
-            
-            cancelar(btnAtualizarDespesas)
+                if(despesa.conta.nome != despesaDB.data().conta.nome && 
+                    despesaDB.data().efetivada === "S"){
+
+                    alert("Não possível alterar a conta de uma despesa já paga.\n Devolva a despesa para alterar a conta!")
+                }else{
+                    atualizaDespesa(firebase.auth().currentUser.uid, despesa.id, despesa)
+                    tdNome.innerText = despesa.nome 
+                    tdData.innerText = despesa.data
+                    tdCategoria.innerText = despesa.categoria
+                    tdConta.innerText = despesa.conta.nome
+                    
+                    let simboloMoeda = ""
+
+                    if(despesa.conta.moeda === "BRL"){
+                        simboloMoeda = "R$ "
+                    }else if(despesa.conta.moeda === "EUR"){
+                        simboloMoeda = "€ "
+                    }else if(despesa.conta.moeda === "USD"){
+                        simboloMoeda = "$ "
+                    }        
+                    tdValor.innerText = simboloMoeda + despesa.valor
+                    
+                    cancelar(btnAtualizarDespesas)
+                }
+            }).catch(error => {
+                alert(error.mesage)
+            })
         })
 
         btnCancelar.addEventListener("click", () => {
@@ -271,7 +284,7 @@ function btnPagar(tdEfetivada, despesa){
     btnPagar.addEventListener("click", () => {
         despesa.efetivada = "S"
         debitarDespesa(despesa)
-        atualizaDespesa(firebase.auth().currentUser.uid, despesa.id, despesa)
+        receberDevolverDespesa(firebase.auth().currentUser.uid, despesa.id, despesa.efetivada)
         btnEfetivada(tdEfetivada, despesa)
     })
 }
@@ -292,7 +305,7 @@ function btnEfetivada(tdEfetivada, despesa){
     btnEfetivada.addEventListener("click", () => {
         despesa.efetivada = "N"
         creditarDespesa(despesa)
-        atualizaDespesa(firebase.auth().currentUser.uid, despesa.id, despesa)
+        receberDevolverDespesa(firebase.auth().currentUser.uid, despesa.id, despesa.efetivada)
         btnPagar(tdEfetivada, despesa)
     })
 }

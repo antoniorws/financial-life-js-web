@@ -25,8 +25,26 @@ function excluirReceita(uid, idReceita){
  * @param {JSON} receita 
  * @description Atualiza uma receita
  */
-function atualizareceita(uid, idReceita, receita){
+function atualizaReceita(uid, idReceita, receita){
     firestore.doc("users/" + uid + "/receitas/" + idReceita).set(receita)
+}
+
+/**
+ * 
+ * @param {String} uid 
+ * @param {String} idReceita
+ * @param {string} recebida 
+ * @description Atualiza uma conta
+ */
+function receberDevolverReceita(uid, idReceita, recebida){
+    firestore.doc("users/" + uid + "/receitas/" + idReceita)
+    .update({
+        "recebida": recebida
+    }).then(() =>{
+        console.log("Receita atualizada com sucesso!")
+    }).catch(error =>{
+        console.log(error.mesage)
+    })
 }
 
 /**
@@ -38,7 +56,7 @@ function atualizareceita(uid, idReceita, receita){
  * @param {String} conta 
  * @returns receitas do usuário
  */
-function getreceitasMes(uid, anoMesStart, anoMesEnd, categoria, conta){
+function getReceitasMes(uid, anoMesStart, anoMesEnd, categoria, conta){
     let research = firestore.collection("users/" + uid + "/receitas")
                                 .where("data", ">=", anoMesStart + "-01")
                                 .where("data", "<", anoMesEnd + "-01") 
@@ -49,4 +67,13 @@ function getreceitasMes(uid, anoMesStart, anoMesEnd, categoria, conta){
         research = research.where("conta.nome", "==", conta)            
     }
     return research.get()
+}
+
+/**
+ * 
+ * @param {string} uid 
+ * @param {string} idReceita 
+ */
+function getReceita(uid, idReceita){
+    return firestore.doc("users/" + uid + "/receitas/" + idReceita).get()
 }
