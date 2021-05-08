@@ -32,6 +32,24 @@ function atualizaReceita(uid, idReceita, receita){
 /**
  * 
  * @param {String} uid 
+ * @param {String} idReceita
+ * @param {string} recebida 
+ * @description Atualiza uma conta
+ */
+function receberDevolverReceita(uid, idReceita, recebida){
+    firestore.doc("users/" + uid + "/receitas/" + idReceita)
+    .update({
+        "recebida": recebida
+    }).then(() =>{
+        console.log("Receita atualizada com sucesso!")
+    }).catch(error =>{
+        console.log(error.mesage)
+    })
+}
+
+/**
+ * 
+ * @param {String} uid 
  * @param {String} anoMesStart 
  * @param {String} anoMesEnd 
  * @param {String} categoria 
@@ -49,4 +67,13 @@ function getReceitasMes(uid, anoMesStart, anoMesEnd, categoria, conta){
         research = research.where("conta.nome", "==", conta)            
     }
     return research.get()
+}
+
+/**
+ * 
+ * @param {string} uid 
+ * @param {string} idReceita 
+ */
+function getReceita(uid, idReceita){
+    return firestore.doc("users/" + uid + "/receitas/" + idReceita).get()
 }

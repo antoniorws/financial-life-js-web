@@ -50,3 +50,30 @@ function getDespesasMes(uid, anoMesStart, anoMesEnd, categoria, conta){
     }
     return research.get()
 }
+
+/**
+ * 
+ * @param {String} uid 
+ * @param {String} idDespesa
+ * @param {String} efetivada 
+ * @description Atualiza uma conta
+ */
+ function receberDevolverDespesa(uid, idDespesa, efetivada){
+    firestore.doc("users/" + uid + "/despesas/" + idDespesa)
+    .update({
+        "efetivada": efetivada
+    }).then(() =>{
+        console.log("Despesa atualizada com sucesso!")
+    }).catch(error =>{
+        console.log(error.mesage)
+    })
+}
+
+/**
+ * 
+ * @param {string} uid 
+ * @param {string} idDespesa 
+ */
+ function getDespesa(uid, idDespesa){
+    return firestore.doc("users/" + uid + "/despesas/" + idDespesa).get()
+}

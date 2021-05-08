@@ -219,30 +219,36 @@ function filtroPesquisa(){
         
         btnAtualizarReceitas.addEventListener("click", () => {
             receita = getReceitaJson(receita.id)
-            if(receita.conta.nome != tdConta.innerText && 
-                receita.recebida === "S"){
-                alert("Não possível alterar a conta de uma receita já recebida.\n Devolva a receita para alterar a conta!")
-                
-            }else{
-                atualizaReceita(firebase.auth().currentUser.uid, receita.id, receita)
-                tdNome.innerText = receita.nome 
-                tdData.innerText = receita.data
-                tdCategoria.innerText = receita.categoria
-                tdConta.innerText = receita.conta.nome
-                
-                let simboloMoeda = ""
+            getReceita(firebase.auth().currentUser.uid, receita.id)
+            .then(receitaDB => {
 
-                if(receita.conta.moeda === "BRL"){
-                    simboloMoeda = "R$ "
-                }else if(receita.conta.moeda === "EUR"){
-                    simboloMoeda = "€ "
-                }else if(receita.conta.moeda === "USD"){
-                    simboloMoeda = "$ "
-                }        
-                tdValor.innerText = simboloMoeda + receita.valor
-                
-                cancelar(btnAtualizarReceitas)
-            }
+                if(receita.conta.nome != receitaDB.data().conta.nome && 
+                    receitaDB.data().recebida === "S"){
+                    alert("Não possível alterar a conta de uma receita já recebida.\n Devolva a receita para alterar a conta!")
+                    
+                }else{
+                    atualizaReceita(firebase.auth().currentUser.uid, receita.id, receita)
+                    tdNome.innerText = receita.nome 
+                    tdData.innerText = receita.data
+                    tdCategoria.innerText = receita.categoria
+                    tdConta.innerText = receita.conta.nome
+                    
+                    let simboloMoeda = ""
+    
+                    if(receita.conta.moeda === "BRL"){
+                        simboloMoeda = "R$ "
+                    }else if(receita.conta.moeda === "EUR"){
+                        simboloMoeda = "€ "
+                    }else if(receita.conta.moeda === "USD"){
+                        simboloMoeda = "$ "
+                    }        
+                    tdValor.innerText = simboloMoeda + receita.valor
+                    
+                    cancelar(btnAtualizarReceitas)
+                }
+            }).catch(error => {
+                alert(error.mesage)
+            })
         })
 
         btnCancelar.addEventListener("click", () => {
@@ -271,14 +277,14 @@ function filtroPesquisa(){
     btnReceber.classList.add("btn-pagar")
     btnReceber.innerText = "Receber"
     for (child of tdRecebida.children){
-        child.remove();
+        child.remove()
     }
     
     tdRecebida.appendChild(btnReceber)
     btnReceber.addEventListener("click", () => {
         receita.recebida = "S"
         creditarReceita(receita)
-        atualizaReceita(firebase.auth().currentUser.uid, receita.id, receita)
+        receberDevolverReceita(firebase.auth().currentUser.uid, receita.id, receita.recebida)
         btnRecebida(tdRecebida, receita)
     })
 }
@@ -300,7 +306,7 @@ function filtroPesquisa(){
     btnRecebida.addEventListener("click", () => {
         receita.recebida = "N"
         debitarReceita(receita)
-        atualizaReceita(firebase.auth().currentUser.uid, receita.id, receita)
+        receberDevolverReceita(firebase.auth().currentUser.uid, receita.id, receita.recebida)
         btnReceber(tdRecebida, receita)
     })
 }
