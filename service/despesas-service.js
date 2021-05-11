@@ -355,6 +355,11 @@ function formataDia(dataDespesa){
     return dataDespesa.getDate().toString().length === 2 ? dataDespesa.getDate() : "0" + dataDespesa.getDate()
 }
 
+/**
+ * 
+ * @param {string} dataDespesa 
+ * @returns Mês formatado
+ */
 function formataMes(dataDespesa){
     return (dataDespesa.getMonth() + 1).toString().length === 2 ? (dataDespesa.getMonth() + 1) : "0" + (dataDespesa.getMonth() + 1)
 }
@@ -364,40 +369,60 @@ function formataMes(dataDespesa){
  */
 function cadastrarDespesa(){
     const despesaJSON = getDespesaJson()
-    const dataDespesa = new Date(despesaJSON.data);
+    let qtdRepetirDespesa = parseInt(repetirDespesa.value);
+    cadastrarDespesaDB(despesaJSON, qtdRepetirDespesa, dateFiltro.value)
+}
+
+/**
+ * 
+ * @param {JSON} despesaJSON 
+ * @param {int} repeticao 
+ * @param {string} mesFiltro 
+ */
+function cadastrarDespesaDB(despesaJSON, repeticao, mesFiltro){
+    criarDespesa(firebase.auth().currentUser.uid, despesaJSON)
+    .then((despesa) => {
+        despesaJSON.id = despesa.id
+        if(despesaJSON.efetivada === "S"){
+            debitarDespesa(despesaJSON)
+        }
+        if(despesaJSON.data.includes(mesFiltro)){
+            updateTable(despesaJSON)
+        }
+        repeticao--
+        if(repeticao > 0){
+            despesaJSON.data = validaDataRepetição(despesaJSON.data)
+            cadastrarDespesaDB(despesaJSON, repeticao, mesFiltro)
+        }else{
+            limparCadastro()
+        }
+    }).catch(error => {
+        console.log(error.message)
+    })
+}
+
+/**
+ * 
+ * @param {int} i 
+ * @param {string} ano 
+ * @param {string} mes 
+ * @param {string} dia 
+ * @returns data validada
+ */
+function validaDataRepetição(dataJson){
+    const dataDespesa = new Date(dataJson);
     let dia = formataDia(dataDespesa)
     dia = (parseInt(dia) + 1).toString().length === 2 ? (parseInt(dia) + 1).toString() : "0" + (parseInt(dia) + 1).toString()
     let mes = formataMes(dataDespesa)
     let ano = dataDespesa.getFullYear()
-    let dataFormatada = `${ano}-${mes}-${dia}`
-    const qtdRepetirDespesa = parseInt(repetirDespesa.value);
-    for(let i = 0; i < qtdRepetirDespesa; i++){
-        if(i > 0){
-            dataFormatada = validaDataRepetição(i, ano, mes, dia)
-        }
-        despesaJSON.data = dataFormatada
-        criarDespesa(firebase.auth().currentUser.uid, despesaJSON)
-        .then((despesa) => {
-            despesaJSON.id = despesa.id
-            if(efetivadaNovaDespesa.value === "S"){
-                debitarDespesa(despesaJSON)
-            }
-            limparCadastro()
-            if(dateNovaDespesa.value.includes(dateFiltro.value)){
-                updateTable(despesaJSON)
-            }
-        }).catch(error => {
-            console.log(error.message)
-        })
-    }
-}
 
-function validaDataRepetição(i, ano, mes, dia){
-    mes = (parseInt(mes) + i).toString().length === 2 ? (parseInt(mes) + i) : "0" + (parseInt(mes) + i)
     if(mes === "12"){
         mes = "01"
         ano = (parseInt(ano) + 1).toString()
+    }else{
+        mes = (parseInt(mes) + 1).toString().length === 2 ? (parseInt(mes) + 1) : "0" + (parseInt(mes) + 1)
     }
+
     if(mes === "02" && parseInt(dia) > 28){
         dia = "28"
     }
@@ -442,7 +467,7 @@ function limparCadastro(){
     contaNovaDespesa.value = ""
     valorNovaDespesa.value = ""
     efetivadaNovaDespesa.value = "N"
-    
+    repetirDespesa.value = "1"
 }
 
 /**
