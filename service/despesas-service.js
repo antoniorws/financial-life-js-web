@@ -8,6 +8,7 @@ const dateNovaDespesa = document.querySelector("#dateNovaDespesa")
 const categoriaNovaDespesa = document.querySelector("#categoriaNovaDespesa")
 const contaNovaDespesa = document.querySelector("#contaNovaDespesa")
 const valorNovaDespesa = document.querySelector("#valorNovaDespesa")
+const repetirDespesa = document.querySelector("#repetirDespesa")
 const efetivadaNovaDespesa = document.querySelector("#efetivadaNovaDespesa")
 //filtro
 const categoriaFiltro = document.querySelector("#categoriaFiltro")
@@ -32,8 +33,8 @@ function verificaUser(){
  */
 function init(){
     const dataHoje = new Date();
-    const dia = dataHoje.getDate().toString.length === 2 ? dataHoje.getDate() : "0" + dataHoje.getDate()
-    const mes = (dataHoje.getMonth() + 1).toString.length === 2 ? (dataHoje.getMonth() + 1) : "0" + (dataHoje.getMonth() + 1)
+    const dia = formataDia(dataHoje)
+    const mes = formataMes(dataHoje)
     const ano = dataHoje.getFullYear()
     document.querySelector("#nav-despesas").classList.add("principal")
     preencheComboCategorias()
@@ -204,6 +205,7 @@ function filtroPesquisa(){
         }
         efetivadaNovaDespesa.classList.add("hidden-class")
         btnCadastrar.classList.add("hidden-class")
+        repetirDespesa.classList.add("hidden-class")
         btnCancelar.classList.remove("hidden-class")
         nomeNovaDespesa.value = despesa.nome
         dateNovaDespesa.value = despesa.data
@@ -220,7 +222,7 @@ function filtroPesquisa(){
         btnAtualizarDespesas.addEventListener("click", () => {
             despesa = getDespesaJson(despesa.id)
             
-            getReceita(firebase.auth().currentUser.uid, receita.id)
+            getDespesa(firebase.auth().currentUser.uid, despesa.id)
             .then(despesaDB => {
 
                 if(despesa.conta.nome != despesaDB.data().conta.nome && 
@@ -345,23 +347,61 @@ btnCadastrar.addEventListener("click", () => {
 })
 
 /**
+ * 
+ * @param {string} dataDespesa 
+ * @returns dia formatado
+ */
+function formataDia(dataDespesa){
+    return dataDespesa.getDate().toString().length === 2 ? dataDespesa.getDate() : "0" + dataDespesa.getDate()
+}
+
+function formataMes(dataDespesa){
+    return (dataDespesa.getMonth() + 1).toString().length === 2 ? (dataDespesa.getMonth() + 1) : "0" + (dataDespesa.getMonth() + 1)
+}
+
+/**
  * @description Cadastrar despesa
  */
 function cadastrarDespesa(){
     const despesaJSON = getDespesaJson()
-    criarDespesa(firebase.auth().currentUser.uid, despesaJSON)
-    .then((despesa) => {
-        despesaJSON.id = despesa.id
-        if(efetivadaNovaDespesa.value === "S"){
-            debitarDespesa(despesaJSON)
+    const dataDespesa = new Date(despesaJSON.data);
+    let dia = formataDia(dataDespesa)
+    dia = (parseInt(dia) + 1).toString().length === 2 ? (parseInt(dia) + 1).toString() : "0" + (parseInt(dia) + 1).toString()
+    let mes = formataMes(dataDespesa)
+    let ano = dataDespesa.getFullYear()
+    let dataFormatada = `${ano}-${mes}-${dia}`
+    const qtdRepetirDespesa = parseInt(repetirDespesa.value);
+    for(let i = 0; i < qtdRepetirDespesa; i++){
+        if(i > 0){
+            dataFormatada = validaDataRepetição(i, ano, mes, dia)
         }
-        limparCadastro()
-        if(dateNovaDespesa.value.includes(dateFiltro.value)){
-            updateTable(despesaJSON)
-        }
-    }).catch(error => {
-        console.log(error.message)
-    })
+        despesaJSON.data = dataFormatada
+        criarDespesa(firebase.auth().currentUser.uid, despesaJSON)
+        .then((despesa) => {
+            despesaJSON.id = despesa.id
+            if(efetivadaNovaDespesa.value === "S"){
+                debitarDespesa(despesaJSON)
+            }
+            limparCadastro()
+            if(dateNovaDespesa.value.includes(dateFiltro.value)){
+                updateTable(despesaJSON)
+            }
+        }).catch(error => {
+            console.log(error.message)
+        })
+    }
+}
+
+function validaDataRepetição(i, ano, mes, dia){
+    mes = (parseInt(mes) + i).toString().length === 2 ? (parseInt(mes) + i) : "0" + (parseInt(mes) + i)
+    if(mes === "12"){
+        mes = "01"
+        ano = (parseInt(ano) + 1).toString()
+    }
+    if(mes === "02" && parseInt(dia) > 28){
+        dia = "28"
+    }
+    return `${ano}-${mes}-${dia}`
 }
 
 /**
@@ -413,6 +453,7 @@ function cancelar(btnAtualizarDespesas){
     efetivadaNovaDespesa.classList.remove("hidden-class")
     const tableButtons = document.querySelectorAll("table button")
     btnCadastrar.classList.remove("hidden-class")
+    repetirDespesa.classList.remove("hidden-class")
     btnAtualizarDespesas.remove()
     btnCancelar.classList.add("hidden-class")
     for(var i = 0; i < tableButtons.length; i++){
