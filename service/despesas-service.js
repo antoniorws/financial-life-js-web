@@ -14,6 +14,9 @@ const efetivadaNovaDespesa = document.querySelector("#efetivadaNovaDespesa")
 const categoriaFiltro = document.querySelector("#categoriaFiltro")
 const contaFiltro = document.querySelector("#contaFiltro")
 const dateFiltro = document.querySelector("#dateDespesaFiltro")
+//
+const previsaoSaldoMes = document.querySelector("#previsaoMes")
+let totalDespesa = 0;
 
 /**
  * @description Verifica se existe usuário.
@@ -41,6 +44,10 @@ function init(){
     preencheComboContas()
     preencheDataAtual(dia, mes, ano)
     getAllDespesasMes(mes, ano, "", "")
+}
+
+function previsaoMes(){
+    previsaoSaldoMes.innerText = totalDespesa
 }
 
 /**
@@ -99,6 +106,7 @@ function preencheComboContas(){
  * @description Carrega todas as despesas do usuário na table de despesas
  */
  function getAllDespesasMes(mes, ano, categoria, conta){
+    totalDespesa = 0
     while(tableDespesas.childNodes.length > 2){
         tableDespesas.removeChild(tableDespesas.lastChild);
     }
@@ -110,8 +118,10 @@ function preencheComboContas(){
         despesas.forEach(despesa => {
             const despesaJSON = despesa.data()
             despesaJSON.id = despesa.id
+            totalDespesa += parseFloat(despesaJSON.valor)
             updateTable(despesaJSON)
         });
+        previsaoMes()
     }).catch(error =>{
         console.log(error.message);
     })
