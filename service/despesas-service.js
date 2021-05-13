@@ -370,7 +370,7 @@ function formataMes(dataDespesa){
 function cadastrarDespesa(){
     const despesaJSON = getDespesaJson()
     let qtdRepetirDespesa = parseInt(repetirDespesa.value);
-    cadastrarDespesaDB(despesaJSON, qtdRepetirDespesa, dateFiltro.value)
+    cadastrarDespesaDB(despesaJSON, qtdRepetirDespesa, dateFiltro.value, null)
 }
 
 /**
@@ -379,7 +379,16 @@ function cadastrarDespesa(){
  * @param {int} repeticao 
  * @param {string} mesFiltro 
  */
-function cadastrarDespesaDB(despesaJSON, repeticao, mesFiltro){
+function cadastrarDespesaDB(despesaJSON, repeticao, mesFiltro, numero){
+    const nome = despesaJSON.nome
+    if(numero === null && repeticao > 1){
+        numero = repeticao;
+        despesaJSON.nome += ` 1/${numero}`
+    }else if(repeticao >= 1 && numero != null){
+        const qtd = (numero - repeticao + 1).toString()
+        despesaJSON.nome += ` ${qtd}/${numero}`
+    }
+
     criarDespesa(firebase.auth().currentUser.uid, despesaJSON)
     .then((despesa) => {
         despesaJSON.id = despesa.id
@@ -392,7 +401,8 @@ function cadastrarDespesaDB(despesaJSON, repeticao, mesFiltro){
         repeticao--
         if(repeticao > 0){
             despesaJSON.data = validaDataRepetição(despesaJSON.data)
-            cadastrarDespesaDB(despesaJSON, repeticao, mesFiltro)
+            despesaJSON.nome = nome
+            cadastrarDespesaDB(despesaJSON, repeticao, mesFiltro, numero)
         }else{
             limparCadastro()
         }
