@@ -3,7 +3,7 @@
 ## About This Project
 It will be a simple web site to control your financial life.
 
-## Building With
+## Built With
  - HTML5
  - CSS3
  - JavaScript
