@@ -16,7 +16,7 @@ const contaFiltro = document.querySelector("#contaFiltro")
 const dateFiltro = document.querySelector("#dateDespesaFiltro")
 //
 const previsaoSaldoMes = document.querySelector("#previsaoMes")
-let totalDespesa = 0;
+let totalDespesa = [];
 
 /**
  * @description Verifica se existe usuário.
@@ -47,7 +47,29 @@ function init(){
 }
 
 function previsaoMes(){
-    previsaoSaldoMes.innerText = totalDespesa
+    let banksAndValues = "";
+    totalDespesa.forEach(bank => {
+        const simbolo = simboloDaMoeda(bank.coin)
+        banksAndValues += `${bank.bank}: ${simbolo} ${bank.expenseValue} \n`
+    })
+    previsaoSaldoMes.innerText = banksAndValues
+}
+
+/**
+ * 
+ * @param {string} moeda 
+ * @returns Símbolo da moeda
+ */
+function simboloDaMoeda(moeda){
+    let simboloMoeda = ""
+    if(moeda === "BRL"){
+        simboloMoeda = "R$ "
+    }else if(moeda === "EUR"){
+        simboloMoeda = "€ "
+    }else if(moeda === "USD"){
+        simboloMoeda = "$ "
+    }
+    return simboloMoeda
 }
 
 /**
@@ -106,7 +128,7 @@ function preencheComboContas(){
  * @description Carrega todas as despesas do usuário na table de despesas
  */
  function getAllDespesasMes(mes, ano, categoria, conta){
-    totalDespesa = 0
+    totalDespesa = []
     while(tableDespesas.childNodes.length > 2){
         tableDespesas.removeChild(tableDespesas.lastChild);
     }
@@ -118,7 +140,24 @@ function preencheComboContas(){
         despesas.forEach(despesa => {
             const despesaJSON = despesa.data()
             despesaJSON.id = despesa.id
-            totalDespesa += parseFloat(despesaJSON.valor)
+            
+            let bankAlreadyExist = false;
+            
+            totalDespesa.forEach(despesaBank => {
+                if(despesaBank.bank === despesaJSON.conta.nome){
+                    despesaBank.expenseValue += parseFloat(despesaJSON.valor)
+                    bankAlreadyExist = true
+                }
+            })
+
+            if(!bankAlreadyExist){
+                totalDespesa.push({
+                    "bank": despesaJSON.conta.nome,
+                    "expenseValue": parseFloat(despesaJSON.valor),
+                    "coin": despesaJSON.conta.moeda
+                })
+            }
+            
             updateTable(despesaJSON)
         });
         previsaoMes()
@@ -181,16 +220,7 @@ function filtroPesquisa(){
     tdData.innerText = despesa.data
     tdCategoria.innerText = despesa.categoria
     tdConta.innerText = typeof despesa.conta === "string" ? despesa.conta : despesa.conta.nome
-    let simboloMoeda = ""
-    if(despesa.conta.moeda === "BRL"){
-        simboloMoeda = "R$ "
-    }else if(despesa.conta.moeda === "EUR"){
-        simboloMoeda = "€ "
-    }else if(despesa.conta.moeda === "USD"){
-        simboloMoeda = "$ "
-    }
-    
-    tdValor.innerText = simboloMoeda + despesa.valor
+    tdValor.innerText = simboloDaMoeda(despesa.conta.moeda) + despesa.valor
     tr.appendChild(tdNome)
     tr.appendChild(tdData)
     tr.appendChild(tdCategoria)
@@ -244,18 +274,8 @@ function filtroPesquisa(){
                     tdNome.innerText = despesa.nome 
                     tdData.innerText = despesa.data
                     tdCategoria.innerText = despesa.categoria
-                    tdConta.innerText = despesa.conta.nome
-                    
-                    let simboloMoeda = ""
-
-                    if(despesa.conta.moeda === "BRL"){
-                        simboloMoeda = "R$ "
-                    }else if(despesa.conta.moeda === "EUR"){
-                        simboloMoeda = "€ "
-                    }else if(despesa.conta.moeda === "USD"){
-                        simboloMoeda = "$ "
-                    }        
-                    tdValor.innerText = simboloMoeda + despesa.valor
+                    tdConta.innerText = despesa.conta.nome     
+                    tdValor.innerText = simboloDaMoeda(despesa.conta.moeda) + despesa.valor
                     
                     cancelar(btnAtualizarDespesas)
                 }

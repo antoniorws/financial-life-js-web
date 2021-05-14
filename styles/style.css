@@ -176,18 +176,17 @@ h3{
 }
 
 .div-despesas{
-
-      border-bottom-width: 0.5px;
-      border-bottom-style: solid;
-      border-bottom-color: #495057;
-   }
+   border-bottom-width: 0.5px;
+   border-bottom-style: solid;
+   border-bottom-color: #495057;
+}
 
 .div-receitas{
-      border-bottom-width: 0.5px;
-      border-bottom-style: solid;
-      border-bottom-color: #495057;
-      margin-left: 20px;
-   }  
+   border-bottom-width: 0.5px;
+   border-bottom-style: solid;
+   border-bottom-color: #495057;
+   margin-left: 20px;
+}  
 
 input, select{
    border-bottom-right-radius: 0;
