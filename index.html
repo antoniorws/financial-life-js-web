@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -9,23 +9,23 @@
     <script src="https://www.gstatic.com/firebasejs/8.2.10/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.2.10/firebase-firestore.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.2.10/firebase-auth.js"></script>
-    <title>Vida Financeira</title>
+    <title>Financial Life</title>
 </head>
 <body>
   <div class="container">
   <div class="login-div">
     <img class="img-index" src="./assets/icon-index.png" alt="">
-    <input type="textfield" class="input-index" id="inputName" placeholder="Nome"/>
+    <input type="textfield" class="input-index" id="inputName" placeholder="Name"/>
     <input type="textfield" class="input-index" id="inputEmail" placeholder="E-mail"/>
-    <input type="password" class="input-index" id="inputPassword" placeholder="Senha"/>
-    <label class="label-mensagem" id="mensagem-index"></label>
+    <input type="password" class="input-index" id="inputPassword" placeholder="Password"/>
+    <label class="label-message" id="message-index"></label>
   </div>
   <div class="login-div">
-    <button class="btn-index" id="cadastrarButton">Cadastrar</button>
-    <button class="btn-index" id="entrarButton">Entrar</button>  
+    <button class="btn-index" id="registerButton">Register</button>
+    <button class="btn-index" id="loginButton">Login</button>  
   </div>
   </div>
-  <!---Crie e configure a classe firebaseconfig.js com seu banco de dados firebase
+  <!---Create and configure the file firebaseConfig.js with your data base firebase
     var config = {
         apiKey: "----------",
         authDomain: "----------",
@@ -45,6 +45,6 @@
   <script src="./service/index-service.js"></script>
 </body>
 <footer>
-  <p class="rodape">&copy; SerraApplications</p>
+  <p class="baseboard">&copy; SerraApplications</p>
 </footer>
 </html>

@@ -1,20 +1,20 @@
-const cadastrarButton = document.querySelector("#cadastrarButton");
-const entrarButton = document.querySelector("#entrarButton");
+const registerButton = document.querySelector("#registerButton");
+const loginButton = document.querySelector("#loginButton");
 const inputName = document.querySelector("#inputName");
 const inputEmail = document.querySelector("#inputEmail");
 const inputPassword = document.querySelector("#inputPassword");
-const labelMensagem = document.querySelector("#mensagem-index");
+const labelMessage = document.querySelector("#message-index");
 
-cadastrarButton.addEventListener("click", ()=>{
+registerButton.addEventListener("click", ()=>{
     const name = inputName.value;
     if(name != null && name.trim() != ""){
         createUser(inputEmail.value, inputPassword.value, inputName.value)
     }else{
-        alert("Preencha o campo Nome!");
+        alert("Fill the field (name)!");
         inputName.focus();
     }
 })
 
-entrarButton.addEventListener("click", ()=>{
+loginButton.addEventListener("click", ()=>{
     login(inputEmail.value, inputPassword.value)
 })

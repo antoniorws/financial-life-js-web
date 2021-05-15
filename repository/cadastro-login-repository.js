@@ -5,12 +5,12 @@ function createUser(email, password, name){
         const users = firestore.collection("users");
         users.doc(uid).set({
             email: email,
-            nome : name
+            name : name
         })
-        alert("Cadastro realizado com sucesso!");
+        alert("Register done with sucess!");
     })
     .catch((error) => {
-        labelMensagem.innerHTML = error.message;
+        labelMessage.innerHTML = error.message;
     });
 }
 
@@ -22,7 +22,7 @@ function login(email, password){
         })
     })
     .catch((error) => {
-        labelMensagem.innerHTML = error.message;
+        labelMessage.innerHTML = error.message;
     });
 }
 

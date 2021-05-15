@@ -82,7 +82,7 @@ body{
    transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
 }
 
-.label-mensagem{
+.label-message{
    margin-bottom: -1px;
    position: relative;
    height: auto;
@@ -95,7 +95,7 @@ body{
    background-clip: padding-box;
 }
 
-.rodape{
+.baseboard{
    margin: 10px;
    text-align: center;
    height: auto;
@@ -121,7 +121,7 @@ body{
    font-size: large;
 }
 
-.div-contas, .div-despesas{
+.div-contas, .div-expenses{
    margin: 20px;
 }
 
@@ -175,13 +175,13 @@ h3{
    color: #495057;
 }
 
-.div-despesas{
+.div-expenses{
    border-bottom-width: 0.5px;
    border-bottom-style: solid;
    border-bottom-color: #495057;
 }
 
-.div-receitas{
+.div-incomes{
    border-bottom-width: 0.5px;
    border-bottom-style: solid;
    border-bottom-color: #495057;
