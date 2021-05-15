@@ -1,47 +1,47 @@
 /**
  * 
  * @param {String} uid  
- * @param {JSON} receita 
- * @returns Uma promise com a criação da receita
+ * @param {JSON} income 
+ * @returns A promise with the income created
  */
- function criarReceita(uid, receita){
-    return firestore.collection("users/" + uid + "/receitas").add(receita)
+ function createIncome(uid, income){
+    return firestore.collection("users/" + uid + "/incomes").add(income)
 }
 
 /**
  * 
  * @param {String} uid 
- * @param {JSON} idReceita
- * @description exclui uma receita
+ * @param {JSON} idIncome
+ * @description delete a income
  */
-function excluirReceita(uid, idReceita){
-    firestore.doc("users/" + uid + "/receitas/" + idReceita).delete()
+function deleteIncome(uid, idIncome){
+    firestore.doc("users/" + uid + "/incomes/" + idIncome).delete()
+}
+
+/**
+ * 
+ * @param {String} uid 
+ * @param {String} idIncome
+ * @param {JSON} income 
+ * @description Update income
+ */
+function updateIncome(uid, idIncome, income){
+    firestore.doc("users/" + uid + "/incomes/" + idIncome).set(income)
 }
 
 /**
  * 
  * @param {String} uid 
  * @param {String} idReceita
- * @param {JSON} receita 
- * @description Atualiza uma receita
+ * @param {string} received 
+ * @description Update account
  */
-function atualizaReceita(uid, idReceita, receita){
-    firestore.doc("users/" + uid + "/receitas/" + idReceita).set(receita)
-}
-
-/**
- * 
- * @param {String} uid 
- * @param {String} idReceita
- * @param {string} recebida 
- * @description Atualiza uma conta
- */
-function receberDevolverReceita(uid, idReceita, recebida){
-    firestore.doc("users/" + uid + "/receitas/" + idReceita)
+function receiveOrGiveBackIncome(uid, idReceita, received){
+    firestore.doc("users/" + uid + "/incomes/" + idReceita)
     .update({
-        "recebida": recebida
+        "received": received
     }).then(() =>{
-        console.log("Receita atualizada com sucesso!")
+        console.log("Income update with success!")
     }).catch(error =>{
         console.log(error.mesage)
     })
@@ -50,21 +50,21 @@ function receberDevolverReceita(uid, idReceita, recebida){
 /**
  * 
  * @param {String} uid 
- * @param {String} anoMesStart 
- * @param {String} anoMesEnd 
- * @param {String} categoria 
- * @param {String} conta 
- * @returns receitas do usuário
+ * @param {String} yearMonthStart 
+ * @param {String} yearMonthEnd 
+ * @param {String} category 
+ * @param {String} account 
+ * @returns Incomes by use
  */
-function getReceitasMes(uid, anoMesStart, anoMesEnd, categoria, conta){
-    let research = firestore.collection("users/" + uid + "/receitas")
-                                .where("data", ">=", anoMesStart + "-01")
-                                .where("data", "<", anoMesEnd + "-01") 
-    if(categoria != ""){
-        research = research.where("categoria", "==", categoria)            
+function getIncomesMonth(uid, yearMonthStart, yearMonthEnd, category, account){
+    let research = firestore.collection("users/" + uid + "/incomes")
+                                .where("date", ">=", yearMonthStart + "-01")
+                                .where("date", "<", yearMonthEnd + "-01") 
+    if(category != ""){
+        research = research.where("category", "==", category)            
     }
-    if(conta != ""){
-        research = research.where("conta.nome", "==", conta)            
+    if(account != ""){
+        research = research.where("account.name", "==", account)            
     }
     return research.get()
 }
@@ -72,8 +72,8 @@ function getReceitasMes(uid, anoMesStart, anoMesEnd, categoria, conta){
 /**
  * 
  * @param {string} uid 
- * @param {string} idReceita 
+ * @param {string} idIncome 
  */
-function getReceita(uid, idReceita){
-    return firestore.doc("users/" + uid + "/receitas/" + idReceita).get()
+function getIncome(uid, idIncome){
+    return firestore.doc("users/" + uid + "/incomes/" + idIncome).get()
 }

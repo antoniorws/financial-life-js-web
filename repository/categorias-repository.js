@@ -64,8 +64,8 @@ function criarCategoriaDeReceita(uid, nome){
 /**
  * 
  * @param {String} uid 
- * @returns Promise com a lista de todas as categorias de receita.
+ * @returns Promise with all of incomes categories list.
  */
-function getCategoriasDeReceita(uid){
-    return firestore.collection("users/" + uid + "/categoria_receita").get()
+function getIncomeCategories(uid){
+    return firestore.collection("users/" + uid + "/income_category").get()
 }

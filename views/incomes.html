@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="../assets/favicon.png">
+    <link href="../styles/style.css" rel="stylesheet">
+    <script src="https://www.gstatic.com/firebasejs/8.2.10/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.2.10/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.2.10/firebase-auth.js"></script>
+    <script src="../config/firebaseconfig.js"></script>
+    <script src="../repository/receitas-repository.js" defer="defer"></script>
+    <script src="../repository/contas-repository.js" defer="defer"></script>
+    <script src="../repository/categorias-repository.js" defer="defer"></script>
+    <script src="../service/receitas-service.js" defer="defer"></script>
+    <title>Receitas</title>
+</head>
+<body>
+    <header class="topnav">
+        <a id="nav-home" href="./dashboard.html">Home</a>
+        <nav>
+            <a id="nav-accounts" href="accounts.html">Contas</a>
+            <a id="nav-incomes" href="incomes.html">Receitas</a>
+            <a id="nav-expenses" href="expenses.html">Despesas</a>
+            <a id="nav-categories" href="categories.html">Categorias</a>
+        </nav>
+        <a id="nav-getout" href="./dashboard.html">Sair</a>
+    </header>
+    <div class="div-incomes">
+        <div id="div-new-register">
+            <h3>Register:</h4> 
+            <input  type="text" placeholder="Incomes name" id="nameNewIncome">
+            <input id="dateNewIncome" type="date">
+            <select id="categoryNewIncome">
+                <option value="" selected>Incomes Category</option>
+            </select>
+            <select id="accountNewIncome">
+                <option value="" selected>Incomes Account</option>
+            </select>
+            <input  type="number" placeholder="Value" id="valueNewIncome">
+            <select id="receivedNewIncome">
+                <option value="N" selected>Don't Received</option>
+                <option value="Y">Received</option>
+            </select>
+            <button id="registerIncome">Register</button>
+            <button id="cancelUpdate" class="hidden-class">Cancel</button>
+        </div>
+        <div class="div-filter">
+            <h3>Filters:</h4> 
+            <input id="dateFilter" placeholder="Filter Monthly" type="month">
+            <select id="categoryFilter">
+                <option value="" selected>Filter by Category</option>
+            </select>
+            <select id="accountFilter">
+                <option value="" selected>Filter by Account</option>
+            </select>
+        </div>
+        <br/>
+        <div class="div-table">
+            <table id="tableIncomes">
+                <tr>
+                    <th>Name</th>
+                    <th>Date</th>
+                    <th>Category</th>
+                    <th>Account</th>
+                    <th>Value</th>
+                    <th>Received?</th>
+                    <th></th>
+                </tr>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

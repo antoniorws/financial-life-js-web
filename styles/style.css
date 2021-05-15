@@ -135,7 +135,7 @@ nav {
    float: right;
 }
 
-.principal{
+.main{
    text-decoration: underline !important;
 }
 
@@ -254,10 +254,10 @@ button:hover {
    margin: 5px;
 }
 
-.btn-pagar{
+.btn-pay{
    background-color: #a11b11;
 }
 
-.btn-pagar:hover{
+.btn-pay:hover{
    background-color: #e02214;
 }

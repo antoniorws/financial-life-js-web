@@ -1,73 +1,75 @@
-const btnCadastrar = document.querySelector("#cadastrarReceita")
-const btnCancelar = document.querySelector("#cancelaAtualizacao")
-const tableReceitas = document.querySelector("#tableReceitas")
-//Nova receita
-const divNovosDados = document.querySelector("#div-novos-dados")
-const nomeNovaReceita = document.querySelector("#nomeNovaReceita")
-const dateNovaReceita = document.querySelector("#dateNovaReceita")
-const categoriaNovaReceita = document.querySelector("#categoriaNovaReceita")
-const contaNovaReceita = document.querySelector("#contaNovaReceita")
-const valorNovaReceita = document.querySelector("#valorNovaReceita")
-const recebidaNovaReceita = document.querySelector("#recebidaNovaReceita")
-//filtro
-const categoriaFiltro = document.querySelector("#categoriaFiltro")
-const contaFiltro = document.querySelector("#contaFiltro")
-const dateFiltro = document.querySelector("#dateReceitaFiltro")
+const btnRegister = document.querySelector("#registerIncome")
+const btnCancel = document.querySelector("#cancelUpdate")
+const tableIncomes = document.querySelector("#tableIncomes")
+//New Income
+const divNewRegister = document.querySelector("#div-new-register")
+const nameNewIncome = document.querySelector("#nameNewIncome")
+const dateNewIncome = document.querySelector("#dateNewIncome")
+const categoryNewIncome = document.querySelector("#categoryNewIncome")
+const accountNewIncome = document.querySelector("#accountNewIncome")
+const valueNewIncome = document.querySelector("#valueNewIncome")
+const receivedNewIncome = document.querySelector("#receivedNewIncome")
+//filter
+const categoryFilter = document.querySelector("#categoryFilter")
+const accountFilter = document.querySelector("#accountFilter")
+const dateFilter = document.querySelector("#dateFilter")
+//others
+const empty = ""
 
 /**
  * @description Verifica se existe usuário.
 */
-function verificaUser(){
+function verifyUser(){
     firebase.auth().onAuthStateChanged( (user) => {
         if (user) {
             init()
         } else {
-            console.log('Usuário não logado')
+            console.log("User not logged in!")
         }
     });
 }
 
 /**
- * @description Inicia os metódos para a página
+ * @description Fill method to screen
  */
  function init(){
-    const dataHoje = new Date();
-    const dia = dataHoje.getDate().toString.length === 2 ? dataHoje.getDate() : "0" + dataHoje.getDate()
-    const mes = (dataHoje.getMonth() + 1).toString.length === 2 ? (dataHoje.getMonth() + 1) : "0" + (dataHoje.getMonth() + 1)
-    const ano = dataHoje.getFullYear()
-    document.querySelector("#nav-receitas").classList.add("principal")
-    preencheComboCategorias()
-    preencheComboContas()
-    preencheDataAtual(dia, mes, ano)
-    getAllReceitasMes(mes, ano, "", "")
+    const dateToday = new Date();
+    const day = dateToday.getDate().toString.length === 2 ? dateToday.getDate() : "0" + dateToday.getDate()
+    const month = (dateToday.getMonth() + 1).toString.length === 2 ? (dateToday.getMonth() + 1) : "0" + (dateToday.getMonth() + 1)
+    const year = dateToday.getFullYear()
+    document.querySelector("#nav-incomes").classList.add("main")
+    fillComboBoxCategories()
+    fillComboBoxAccounts()
+    fillCurrentDate(day, month, year)
+    getAllIncomesMonth(month, year, empty, empty)
 }
 
 /**
  * 
- * @param {string} dia 
- * @param {string} mes 
- * @param {string} ano 
+ * @param {string} day 
+ * @param {string} month 
+ * @param {string} year 
  * @description Preenche com a data atual
  */
-function preencheDataAtual(dia, mes, ano){
-    dateNovaReceita.value = ano + "-" + mes + "-" + dia
-    dateFiltro.value = ano + "-" + mes
+function fillCurrentDate(day, month, year){
+    dateNewIncome.value = year + "-" + month + "-" + day
+    dateFilter.value = year + "-" + month
 }
 
 /**
- * @description Preenche os combos de categorias
+ * @description Fill comboBox of the Categories
  */
- function preencheComboCategorias(){
-    const response = getCategoriasDeReceita(firebase.auth().currentUser.uid)
-    response.then(tiposDeReceitas => {
-        tiposDeReceitas.forEach(tipoReceita => {
+ function fillComboBoxCategories(){
+    const response = getIncomeCategories(firebase.auth().currentUser.uid)
+    response.then(incomesTypes => {
+        incomesTypes.forEach(incomeType => {
             const option = document.createElement("option")
-            option.value = tipoReceita.data().nome
-            option.innerText = tipoReceita.data().nome
-            categoriaNovaReceita.appendChild(option)
+            option.value = incomeType.data().name
+            option.innerText = incomeType.data().name
+            categoryNewIncome.appendChild(option)
             const optionFiltro = document.createElement("option")
-            optionFiltro.innerText = tipoReceita.data().nome
-            categoriaFiltro.appendChild(optionFiltro)
+            optionFiltro.innerText = incomeType.data().name
+            categoryFilter.appendChild(optionFiltro)
         });
     }).catch(error =>{
         console.log(error.message);
@@ -75,19 +77,19 @@ function preencheDataAtual(dia, mes, ano){
 }
 
 /**
- * @description Preeche os combos de contas
+ * @description Fill Combo Box of Accounts
  */
- function preencheComboContas(){
-    const response = getContas(firebase.auth().currentUser.uid)
-    response.then(contas => {
-        contas.forEach(conta => {
+ function fillComboBoxAccounts(){
+    const response = getaccounts(firebase.auth().currentUser.uid)
+    response.then(accounts => {
+        accounts.forEach(account => {
             const option = document.createElement("option")
-            option.value = conta.id + "--"+conta.data().moeda
-            option.innerText = conta.data().nome
-            contaNovaReceita.appendChild(option)
+            option.value = account.id + "--"+account.data().currency
+            option.innerText = account.data().name
+            accountNewIncome.appendChild(option)
             const optionFiltro = document.createElement("option")
-            optionFiltro.innerText = conta.data().nome
-            contaFiltro.appendChild(optionFiltro)
+            optionFiltro.innerText = account.data().name
+            accountFilter.appendChild(optionFiltro)
         });
     }).catch(error =>{
         console.log(error.message);
@@ -95,50 +97,50 @@ function preencheDataAtual(dia, mes, ano){
 }
 
 /**
- * @description Filtro por mês de acordo com o dateFiltro
+ * @description Filter by month
  */
- dateFiltro.addEventListener("change", () => {
-    filtroPesquisa()
+ dateFilter.addEventListener("change", () => {
+    filterResearch()
 })
 
 /**
- * @description Filtro por categoria
+ * @description Filter by category
  */
-categoriaFiltro.addEventListener("change", () => {
-    filtroPesquisa()
+categoryFilter.addEventListener("change", () => {
+    filterResearch()
 })
 
 /**
- * @description Filtro por conta
+ * @description Filter by account
  */
-contaFiltro.addEventListener("change", () => {
-    filtroPesquisa()
+accountFilter.addEventListener("change", () => {
+    filterResearch()
 })
 
 /**
- * @description Filtrar
+ * @description To filter
  */
-function filtroPesquisa(){
-    const dateFiltroSplit = dateFiltro.value.split("-")
-    getAllReceitasMes(dateFiltroSplit[1], dateFiltroSplit[0], categoriaFiltro.value, contaFiltro.value)
+function filterResearch(){
+    const dateFilterSplit = dateFilter.value.split("-")
+    getAllIncomesMonth(dateFilterSplit[1], dateFilterSplit[0], categoryFilter.value, accountFilter.value)
 }
 
 /**
- * @description Carrega todas as receitas do usuário na table de receitas
+ * @description Load all of incomes from user at incomes table.
  */
- function getAllReceitasMes(mes, ano, categoria, conta){
-    while(tableReceitas.childNodes.length > 2){
-        tableReceitas.removeChild(tableReceitas.lastChild);
+ function getAllIncomesMonth(month, year, category, account){
+    while(tableIncomes.childNodes.length > 2){
+        tableIncomes.removeChild(tableIncomes.lastChild);
     }
-    const dataStart = ano + "-" + mes
-    const mesEnd = parseInt(mes) === 12 ? "01" : "0" + (parseInt(mes) + 1)
-    const dataEnd = ano + "-" + mesEnd
-    const response = getReceitasMes(firebase.auth().currentUser.uid, dataStart, dataEnd, categoria, conta)
-    response.then((receitas) => {
-        receitas.forEach(receita => {
-            const receitaJSON = receita.data()
-            receitaJSON.id = receita.id
-            updateTable(receitaJSON)
+    const dateStart = year + "-" + month
+    const monthEnd = parseInt(month) === 12 ? "01" : "0" + (parseInt(month) + 1)
+    const dateEnd = year + "-" + monthEnd
+    const response = getIncomesMonth(firebase.auth().currentUser.uid, dateStart, dateEnd, category, account)
+    response.then((incomes) => {
+        incomes.forEach(income => {
+            const incomeJSON = income.data()
+            incomeJSON.id = income.id
+            updateTable(incomeJSON)
         });
     }).catch(error =>{
         console.log(error.message);
@@ -147,218 +149,218 @@ function filtroPesquisa(){
 
 /**
  * 
- * @param {JSON} receita 
- * @description Carrega a table
+ * @param {JSON} income 
+ * @description Load table
  */
- function updateTable(receita){
+ function updateTable(income){
     const tr = document.createElement("TR")
-    const tdNome = document.createElement("TD")
-    const tdData = document.createElement("TD")
-    const tdCategoria = document.createElement("TD")
-    const tdConta = document.createElement("TD")
-    const tdValor = document.createElement("TD")
-    const tdRecebida = document.createElement("TD")
-    const btnExcluir = document.createElement("BUTTON")
-    const btnAtualizar = document.createElement("BUTTON")
+    const tdName = document.createElement("TD")
+    const tdDate = document.createElement("TD")
+    const tdCategory = document.createElement("TD")
+    const tdAccount = document.createElement("TD")
+    const tdValue = document.createElement("TD")
+    const tdReceived = document.createElement("TD")
+    const btnDelete = document.createElement("BUTTON")
+    const btnUpdate = document.createElement("BUTTON")
     
-    btnExcluir.innerText = "Exluir"
-    btnExcluir.classList.add("btn-table")
-    btnAtualizar.innerText = "Alterar"
-    btnAtualizar.classList.add("btn-table")
+    btnDelete.innerText = "Delete"
+    btnDelete.classList.add("btn-table")
+    btnUpdate.innerText = "Change"
+    btnUpdate.classList.add("btn-table")
 
-    tdNome.innerText = receita.nome 
-    tdData.innerText = receita.data
-    tdCategoria.innerText = receita.categoria
-    tdConta.innerText = typeof receita.conta === "string" ? receita.conta : receita.conta.nome
-    let simboloMoeda = ""
-    if(receita.conta.moeda === "BRL"){
-        simboloMoeda = "R$ "
-    }else if(receita.conta.moeda === "EUR"){
-        simboloMoeda = "€ "
-    }else if(receita.conta.moeda === "USD"){
-        simboloMoeda = "$ "
+    tdName.innerText = income.name 
+    tdDate.innerText = income.date
+    tdCategory.innerText = income.category
+    tdAccount.innerText = typeof income.account === "string" ? income.account : income.account.name
+    let currencySymbol = ""
+    if(income.account.currency === "BRL"){
+        currencySymbol = "R$ "
+    }else if(income.account.currency === "EUR"){
+        currencySymbol = "€ "
+    }else if(income.account.currency === "USD"){
+        currencySymbol = "$ "
     }
     
-    tdValor.innerText = simboloMoeda + receita.valor
-    tr.appendChild(tdNome)
-    tr.appendChild(tdData)
-    tr.appendChild(tdCategoria)
-    tr.appendChild(tdConta)
-    tr.appendChild(tdValor)
-    tr.appendChild(tdRecebida)
-    tr.appendChild(btnAtualizar)
-    tr.appendChild(btnExcluir)
+    tdValue.innerText = currencySymbol + income.value
+    tr.appendChild(tdName)
+    tr.appendChild(tdDate)
+    tr.appendChild(tdCategory)
+    tr.appendChild(tdAccount)
+    tr.appendChild(tdValue)
+    tr.appendChild(tdReceived)
+    tr.appendChild(btnUpdate)
+    tr.appendChild(btnDelete)
     
-    if(receita.recebida === "N"){
-        btnReceber(tdRecebida, receita)
+    if(income.received === "N"){
+        btnReceive(tdReceived, income)
     }else{
-        btnRecebida(tdRecebida, receita)
+        btnreceived(tdReceived, income)
     }
 
-    tableReceitas.appendChild(tr)
+    tableIncomes.appendChild(tr)
 
-    btnAtualizar.addEventListener("click", () => {
+    btnUpdate.addEventListener("click", () => {
         const tableButtons = document.querySelectorAll("table button")
         for(var i = 0; i < tableButtons.length; i++){
             tableButtons[i].classList.add("disabled-button")
         }
-        recebidaNovaReceita.classList.add("hidden-class")
-        btnCadastrar.classList.add("hidden-class")
-        btnCancelar.classList.remove("hidden-class")
-        nomeNovaReceita.value = receita.nome
-        dateNovaReceita.value = receita.data
-        categoriaNovaReceita.value = receita.categoria
-        contaNovaReceita.value = receita.conta.id + "--" + receita.conta.moeda
-        valorNovaReceita.value = receita.valor
-        recebidaNovaReceita.value = receita.recebida
-        nomeNovaReceita.focus()
+        receivedNewIncome.classList.add("hidden-class")
+        btnRegister.classList.add("hidden-class")
+        btnCancel.classList.remove("hidden-class")
+        nameNewIncome.value = income.name
+        dateNewIncome.value = income.date
+        categoryNewIncome.value = income.category
+        accountNewIncome.value = income.account.id + "--" + income.account.currency
+        valueNewIncome.value = income.value
+        receivedNewIncome.value = income.received
+        nameNewIncome.focus()
 
-        const btnAtualizarReceitas = document.createElement("BUTTON")
-        btnAtualizarReceitas.innerText = "Atualizar"
-        divNovosDados.appendChild(btnAtualizarReceitas)
+        const btnIncomesUpdate = document.createElement("BUTTON")
+        btnIncomesUpdate.innerText = "Update"
+        divNewRegister.appendChild(btnIncomesUpdate)
         
-        btnAtualizarReceitas.addEventListener("click", () => {
-            receita = getReceitaJson(receita.id)
-            getReceita(firebase.auth().currentUser.uid, receita.id)
-            .then(receitaDB => {
+        btnIncomesUpdate.addEventListener("click", () => {
+            income = getIncomeJson(income.id)
+            getIncome(firebase.auth().currentUser.uid, income.id)
+            .then(incomeDB => {
 
-                if(receita.conta.nome != receitaDB.data().conta.nome && 
-                    receitaDB.data().recebida === "S"){
-                    alert("Não possível alterar a conta de uma receita já recebida.\n Devolva a receita para alterar a conta!")
+                if(income.account.name != incomeDB.data().account.name && 
+                    incomeDB.data().received === "Y"){
+                    alert("Can not change an account from a received income.\n Give back the income to change an account!")
                     
                 }else{
-                    atualizaReceita(firebase.auth().currentUser.uid, receita.id, receita)
-                    tdNome.innerText = receita.nome 
-                    tdData.innerText = receita.data
-                    tdCategoria.innerText = receita.categoria
-                    tdConta.innerText = receita.conta.nome
+                    updateIncome(firebase.auth().currentUser.uid, income.id, income)
+                    tdName.innerText = income.name 
+                    tdDate.innerText = income.data
+                    tdCategory.innerText = income.category
+                    tdAccount.innerText = income.account.name
                     
-                    let simboloMoeda = ""
+                    let symbolCurrency = ""
     
-                    if(receita.conta.moeda === "BRL"){
-                        simboloMoeda = "R$ "
-                    }else if(receita.conta.moeda === "EUR"){
-                        simboloMoeda = "€ "
-                    }else if(receita.conta.moeda === "USD"){
-                        simboloMoeda = "$ "
+                    if(income.account.currency === "BRL"){
+                        symbolCurrency = "R$ "
+                    }else if(income.account.currency === "EUR"){
+                        symbolCurrency = "€ "
+                    }else if(income.account.currency === "USD"){
+                        symbolCurrency = "$ "
                     }        
-                    tdValor.innerText = simboloMoeda + receita.valor
+                    tdValue.innerText = symbolCurrency + income.value
                     
-                    cancelar(btnAtualizarReceitas)
+                    cancel(btnIncomesUpdate)
                 }
             }).catch(error => {
                 alert(error.mesage)
             })
         })
 
-        btnCancelar.addEventListener("click", () => {
-            cancelar(btnAtualizarReceitas)
+        btnCancel.addEventListener("click", () => {
+            cancel(btnIncomesUpdate)
         })
     })
 
-    btnExcluir.addEventListener("click", () => {
-        if(receita.recebida === "S"){
-            debitarReceita(receita)
+    btnDelete.addEventListener("click", () => {
+        if(income.received === "S"){
+            debitIncome(income)
         }
-        excluirReceita(firebase.auth().currentUser.uid, receita.id)
+        deleteIncome(firebase.auth().currentUser.uid, income.id)
         tr.remove()
     })
 
 }
 
 /**
- * @description Receber receita
- * @param {String} tdRecebida 
- * @param {JSON} receita 
+ * @description To receive income
+ * @param {String} tdReceived 
+ * @param {JSON} income 
  */
- function btnReceber(tdRecebida, receita){
-    const btnReceber = document.createElement("BUTTON")
-    btnReceber.classList.add("btn-table")
-    btnReceber.classList.add("btn-pagar")
-    btnReceber.innerText = "Receber"
-    for (child of tdRecebida.children){
+ function btnReceive(tdReceived, income){
+    const btnReceive = document.createElement("BUTTON")
+    btnReceive.classList.add("btn-table")
+    btnReceive.classList.add("btn-pay")
+    btnReceive.innerText = "Receive"
+    for (child of tdReceived.children){
         child.remove()
     }
     
-    tdRecebida.appendChild(btnReceber)
-    btnReceber.addEventListener("click", () => {
-        receita.recebida = "S"
-        creditarReceita(receita)
-        receberDevolverReceita(firebase.auth().currentUser.uid, receita.id, receita.recebida)
-        btnRecebida(tdRecebida, receita)
+    tdReceived.appendChild(btnReceive)
+    btnReceive.addEventListener("click", () => {
+        income.received = "Y"
+        creditIncome(income)
+        receiveOrGiveBackIncome(firebase.auth().currentUser.uid, income.id, income.received)
+        btnreceived(tdReceived, income)
     })
 }
 
 /**
- * @description Devolver receita
- * @param {String} tdRecebida 
- * @param {Json} receita 
+ * @description Give back income
+ * @param {String} tdReceived 
+ * @param {Json} income 
  */
- function btnRecebida(tdRecebida, receita){
-    const btnRecebida = document.createElement("BUTTON")
-    btnRecebida.classList.add("btn-table")
-    btnRecebida.innerText = "Recebida"
-    for (child of tdRecebida.children){
+ function btnreceived(tdReceived, income){
+    const btnReceived = document.createElement("BUTTON")
+    btnReceived.classList.add("btn-table")
+    btnReceived.innerText = "received"
+    for (child of tdReceived.children){
         child.remove();
     }
     
-    tdRecebida.appendChild(btnRecebida)
-    btnRecebida.addEventListener("click", () => {
-        receita.recebida = "N"
-        debitarReceita(receita)
-        receberDevolverReceita(firebase.auth().currentUser.uid, receita.id, receita.recebida)
-        btnReceber(tdRecebida, receita)
+    tdReceived.appendChild(btnReceived)
+    btnReceived.addEventListener("click", () => {
+        income.received = "N"
+        debitIncome(income)
+        receiveOrGiveBackIncome(firebase.auth().currentUser.uid, income.id, income.received)
+        btnReceive(tdReceived, income)
     })
 }
 
 /**
  * 
  * @param {String} id 
- * @returns Json de Receita
+ * @returns Income JSON
  */
- function getReceitaJson(id){
-    const contaValue = contaNovaReceita.value.split("--")
-    const receitaJson = {"nome": nomeNovaReceita.value,
-                        "data": dateNovaReceita.value,
-                        "categoria": categoriaNovaReceita.value,
-                        "conta": {
-                            "id": contaValue[0],
-                            "nome": contaNovaReceita.selectedOptions[0].innerText,
-                            "moeda": contaValue[1]
+ function getIncomeJson(id){
+    const accountValue = accountNewIncome.value.split("--")
+    const incomeJson = {"name": nameNewIncome.value,
+                        "data": dateNewIncome.value,
+                        "category": categoryNewIncome.value,
+                        "account": {
+                            "id": accountValue[0],
+                            "name": accountNewIncome.selectedOptions[0].innerText,
+                            "currency": accountValue[1]
                         },
-                        "valor": valorNovaReceita.value,
-                        "recebida": recebidaNovaReceita.value
+                        "value": valueNewIncome.value,
+                        "received": receivedNewIncome.value
                     }
 
     if(id !== undefined){
-        receitaJson.id = id
-        return receitaJson
+        incomeJson.id = id
+        return incomeJson
     }
-    return receitaJson
+    return incomeJson
         
  }
 
 /**
- * @description Click do botão para cadastrar receita
+ * @description Button click to register income
  */
-btnCadastrar.addEventListener("click", () => {
-    cadastrarReceita()
+btnRegister.addEventListener("click", () => {
+    registerIncome()
 })
 
 /**
- * @description Cadastrar receita
+ * @description Register income
  */
- function cadastrarReceita(){
-    const receitaJSON = getReceitaJson()
-    criarReceita(firebase.auth().currentUser.uid, receitaJSON)
-    .then((receita) => {
-        receitaJSON.id = receita.id
-        if(recebidaNovaReceita.value === "S"){
-            creditarReceita(receitaJSON)
+ function registerIncome(){
+    const incomeJSON = getIncomeJson()
+    createIncome(firebase.auth().currentUser.uid, incomeJSON)
+    .then((income) => {
+        incomeJSON.id = income.id
+        if(receivedNewIncome.value === "Y"){
+            creditIncome(incomeJSON)
         }
-        limparCadastro()
-        if(dateNovaReceita.value.includes(dateFiltro.value)){
-            updateTable(receitaJSON)
+        cleanRegister()
+        if(dateNewIncome.value.includes(dateFilter.value)){
+            updateTable(incomeJSON)
         }
     }).catch(error => {
         console.log(error.message)
@@ -366,59 +368,59 @@ btnCadastrar.addEventListener("click", () => {
 }
 
 /**
- * @description Debita o valor da receita do total da conta
- * @param {Json} receitaJSON 
+ * @description Debit value from income
+ * @param {Json} incomeJSON 
  */
- function debitarReceita(receitaJSON){
-    getConta(firebase.auth().currentUser.uid, receitaJSON.conta.id)
-    .then(conta => {
-        const novoSaldo = conta.data().saldo - receitaJSON.valor
-        atualizaSaldoConta(firebase.auth().currentUser.uid, conta.id, novoSaldo)
+ function debitIncome(incomeJSON){
+    getAccount(firebase.auth().currentUser.uid, incomeJSON.account.id)
+    .then(account => {
+        const newBalance = account.data().saldo - incomeJSON.value
+        updateAccountBalance(firebase.auth().currentUser.uid, account.id, newBalance)
     }).catch(error =>{
         console.log(error.message)
     })
 }
 
 /**
- * @description Credita o valor da Receita do total da conta
- * @param {Json} receitaJSON 
+ * @description Credit value from income.
+ * @param {Json} incomeJSON 
  */
- function creditarReceita(receitaJSON){
-    getConta(firebase.auth().currentUser.uid, receitaJSON.conta.id)
-    .then(conta => {
-        const novoSaldo = parseFloat(conta.data().saldo) + parseFloat(receitaJSON.valor)
-        atualizaSaldoConta(firebase.auth().currentUser.uid, conta.id, novoSaldo)
+ function creditIncome(incomeJSON){
+    getAccount(firebase.auth().currentUser.uid, incomeJSON.account.id)
+    .then(account => {
+        const newBalance = parseFloat(account.data().saldo) + parseFloat(incomeJSON.value)
+        updateAccountBalance(firebase.auth().currentUser.uid, account.id, newBalance)
     }).catch(error =>{
         console.log(error.message)
     })
 }
 
 /**
- * @description limpa os valores da parte de cadastro
+ * @description Clean values
  */
- function limparCadastro(){
-    nomeNovaReceita.value = ""
-    dateNovaReceita.innerText = ""
-    categoriaNovaReceita.value = ""
-    contaNovaReceita.value = ""
-    valorNovaReceita.value = ""
-    recebidaNovaReceita.value = "N"   
+ function cleanRegister(){
+    nameNewIncome.value = ""
+    dateNewIncome.innerText = ""
+    categoryNewIncome.value = ""
+    accountNewIncome.value = ""
+    valueNewIncome.value = ""
+    receivedNewIncome.value = "N"   
 }
 
 /**
- * @description Cancela operação
- * @param {BUTTON} btnAtualizarReceitas 
+ * @description Cancel operation
+ * @param {BUTTON} btnUpdateIncomes 
  */
- function cancelar(btnAtualizarReceitas){
-    recebidaNovaReceita.classList.remove("hidden-class")
+ function cancel(btnUpdateIncomes){
+    receivedNewIncome.classList.remove("hidden-class")
     const tableButtons = document.querySelectorAll("table button")
-    btnCadastrar.classList.remove("hidden-class")
-    btnAtualizarReceitas.remove()
-    btnCancelar.classList.add("hidden-class")
+    btnRegister.classList.remove("hidden-class")
+    btnUpdateIncomes.remove()
+    btnCancel.classList.add("hidden-class")
     for(var i = 0; i < tableButtons.length; i++){
         tableButtons[i].classList.remove("disabled-button")
     }
-    limparCadastro()
+    cleanRegister()
 }
 
-verificaUser()
+verifyUser()
