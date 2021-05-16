@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -10,45 +10,45 @@
     <script src="https://www.gstatic.com/firebasejs/8.2.10/firebase-firestore.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.2.10/firebase-auth.js"></script>
     <script src="../config/firebaseconfig.js"></script>
-    <script src="../repository/categorias-repository.js" defer="defer"></script>
-    <script src="../service/categorias-service.js" defer="defer"></script>
-    <title>Categorias</title>
+    <script src="../repository/categories-repository.js" defer="defer"></script>
+    <script src="../service/categories-service.js" defer="defer"></script>
+    <title>Categories</title>
 </head>
 <body>
     <header class="topnav">
         <a id="nav-home" href="./dashboard.html">Home</a>
         <nav>
-            <a id="nav-contas" href="contas.html">Contas</a>
-            <a id="nav-receitas" href="receitas.html">Receitas</a>
-            <a id="nav-despesas" href="despesas.html">Despesas</a>
-            <a id="nav-categorias" href="categorias.html">Categorias</a>
+            <a id="nav-accounts" href="accounts.html">Accounts</a>
+            <a id="nav-incomes" href="incomes.html">Incomes</a>
+            <a id="nav-expenses" href="expenses.html">Expenses</a>
+            <a id="nav-categories" href="categories.html">Categories</a>
         </nav>
         <a id="nav-sair" href="./dashboard.html">Sair</a>
     </header>
-    <div class="div-despesas">
-        <h3>Despesas</h3>
-        <input type="text" placeholder="Nome da Categoria" id="novaCategoriaDespesa">
-        <button id="cadastrarDespesa">Cadastrar</button>
+    <div class="div-expenses">
+        <h3>Expenses</h3>
+        <input type="text" placeholder="Category name" id="newCategoryExpense">
+        <button id="registerExpense">Register</button>
         <br>
         <br>
-        <table id="table-despesas">
+        <table id="table-expenses">
             <tr>
               <th>Id</th>
-              <th>Descrição</th>
+              <th>Description</th>
               <th></th>
             </tr>
         </table>
     </div>
-    <div class="div-receitas">
-        <h3>Receitas</h3>
-        <input type="text" placeholder="Nome da Categoria" id="novaCategoriaReceita">
-        <button id="cadastrarReceita">Cadastrar</button>
+    <div class="div-incomes">
+        <h3>Incomes</h3>
+        <input type="text" placeholder="Category name" id="newCategoryIncome">
+        <button id="registerIncome">Register</button>
         <br>
         <br>
-        <table id="table-receitas">
+        <table id="table-incomes">
             <tr>
                 <th>Id</th>
-                <th>Descrição</th>
+                <th>Description</th>
                 <th></th>
             </tr>
         </table>
