@@ -321,7 +321,7 @@ function filterResearch(){
  function getIncomeJson(id){
     const accountValue = accountNewIncome.value.split("--")
     const incomeJson = {"name": nameNewIncome.value,
-                        "data": dateNewIncome.value,
+                        "date": dateNewIncome.value,
                         "category": categoryNewIncome.value,
                         "account": {
                             "id": accountValue[0],

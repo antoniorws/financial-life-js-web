@@ -1,103 +1,106 @@
-const btnCadastrar = document.querySelector("#cadastrarDespesa")
-const btnCancelar = document.querySelector("#cancelaAtualizacao")
-const tableDespesas = document.querySelector("#tableDespesas")
+const btnRegister = document.querySelector("#registerExpense")
+const btnCancel = document.querySelector("#cancelUpdate")
+const tableExpenses = document.querySelector("#tableExpenses")
 //Nova despesa
-const divNovosDados = document.querySelector("#div-novos-dados")
-const nomeNovaDespesa = document.querySelector("#nomeNovaDespesa")
-const dateNovaDespesa = document.querySelector("#dateNovaDespesa")
-const categoriaNovaDespesa = document.querySelector("#categoriaNovaDespesa")
-const contaNovaDespesa = document.querySelector("#contaNovaDespesa")
-const valorNovaDespesa = document.querySelector("#valorNovaDespesa")
-const repetirDespesa = document.querySelector("#repetirDespesa")
-const efetivadaNovaDespesa = document.querySelector("#efetivadaNovaDespesa")
+const divNewData = document.querySelector("#div-new-data")
+const nameNewExpense = document.querySelector("#nameNewExpense")
+const dateNewExpense = document.querySelector("#dateNewExpense")
+const categoryNewExpense = document.querySelector("#categoryNewExpense")
+const accountNewExpense = document.querySelector("#accountNewExpense")
+const valueNewExpense = document.querySelector("#valueNewExpense")
+const repeatExpense = document.querySelector("#repeatExpense")
+const payedNewExpense = document.querySelector("#payedNewExpense")
 //filtro
-const categoriaFiltro = document.querySelector("#categoriaFiltro")
-const contaFiltro = document.querySelector("#contaFiltro")
-const dateFiltro = document.querySelector("#dateDespesaFiltro")
+const categoryFilter = document.querySelector("#categoryFilter")
+const accountFilter = document.querySelector("#accountFilter")
+const dateFilter = document.querySelector("#dateExpenseFilter")
 //
-const previsaoSaldoMes = document.querySelector("#previsaoMes")
-let totalDespesa = [];
+const previsionMonthlyBalance = document.querySelector("#monthlyPrevision")
+let totalExpense = [];
 
 /**
- * @description Verifica se existe usuário.
+ * @description Verify if user is logged
 */
-function verificaUser(){
+function verifyUser(){
     firebase.auth().onAuthStateChanged( (user) => {
         if (user) {
             init()
         } else {
-            console.log('Usuário não logado')
+            console.log('User not logged in!')
         }
     });
 }
 
 /**
- * @description Inicia os metódos para a página
+ * @description Init methods to screen.
  */
 function init(){
-    const dataHoje = new Date();
-    const dia = formataDia(dataHoje)
-    const mes = formataMes(dataHoje)
-    const ano = dataHoje.getFullYear()
-    document.querySelector("#nav-despesas").classList.add("principal")
-    preencheComboCategorias()
-    preencheComboContas()
-    preencheDataAtual(dia, mes, ano)
-    getAllDespesasMes(mes, ano, "", "")
+    const dateToday = new Date();
+    const day = formatDay(dateToday)
+    const month = formatMonth(dateToday)
+    const year = dateToday.getFullYear()
+    document.querySelector("#nav-expenses").classList.add("main")
+    fillComboBoxCategories()
+    fillComboBoxAccounts()
+    fillCurrentDate(day, month, year)
+    getAllMonthExpenses(month, year, "", "")
 }
 
-function previsaoMes(){
+/**
+ * @description Monthly Prevision.
+ */
+function previsionMonth(){
     let banksAndValues = "";
-    totalDespesa.forEach(bank => {
-        const simbolo = simboloDaMoeda(bank.coin)
-        banksAndValues += `${bank.bank}: ${simbolo} ${bank.expenseValue} \n`
+    totalExpense.forEach(bank => {
+        const symbol = symbolFromCurrency(bank.coin)
+        banksAndValues += `${bank.bank}: ${symbol} ${bank.expenseValue} \n`
     })
-    previsaoSaldoMes.innerText = banksAndValues
+    previsionMonthlyBalance.innerText = banksAndValues
 }
 
 /**
  * 
- * @param {string} moeda 
- * @returns Símbolo da moeda
+ * @param {string} currency 
+ * @returns Symbol from currency
  */
-function simboloDaMoeda(moeda){
-    let simboloMoeda = ""
-    if(moeda === "BRL"){
-        simboloMoeda = "R$ "
-    }else if(moeda === "EUR"){
-        simboloMoeda = "€ "
-    }else if(moeda === "USD"){
-        simboloMoeda = "$ "
+function symbolFromCurrency(currency){
+    let symbolCurrency = ""
+    if(currency === "BRL"){
+        symbolCurrency = "R$ "
+    }else if(currency === "EUR"){
+        symbolCurrency = "€ "
+    }else if(currency === "USD"){
+        symbolCurrency = "$ "
     }
-    return simboloMoeda
+    return symbolCurrency
 }
 
 /**
  * 
- * @param {string} dia 
- * @param {string} mes 
- * @param {string} ano 
- * @description preenche data atual 
+ * @param {string} day 
+ * @param {string} month 
+ * @param {string} year 
+ * @description Fill current date
  */
-function preencheDataAtual(dia, mes, ano){
-    dateNovaDespesa.value = ano + "-" + mes + "-" + dia
-    dateFiltro.value = ano + "-" + mes
+function fillCurrentDate(day, month, year){
+    dateNewExpense.value = year + "-" + month + "-" + day
+    dateFilter.value = year + "-" + month
 }
 
 /**
- * @description Preenche os combos de categorias
+ * @description Fill ComboBox Categories
  */
-function preencheComboCategorias(){
-    const response = getCategoriasDeDespesa(firebase.auth().currentUser.uid)
-    response.then(tiposDeDespesas => {
-        tiposDeDespesas.forEach(tipoDespesa => {
+function fillComboBoxCategories(){
+    const response = getCategoriesExpense(firebase.auth().currentUser.uid)
+    response.then(typesOfExpenses => {
+        typesOfExpenses.forEach(typeExpense => {
             const option = document.createElement("option")
-            option.value = tipoDespesa.data().nome
-            option.innerText = tipoDespesa.data().nome
-            categoriaNovaDespesa.appendChild(option)
+            option.value = typeExpense.data().name
+            option.innerText = typeExpense.data().name
+            categoryNewExpense.appendChild(option)
             const optionFiltro = document.createElement("option")
-            optionFiltro.innerText = tipoDespesa.data().nome
-            categoriaFiltro.appendChild(optionFiltro)
+            optionFiltro.innerText = typeExpense.data().name
+            categoryFilter.appendChild(optionFiltro)
         });
     }).catch(error =>{
         console.log(error.message);
@@ -105,19 +108,19 @@ function preencheComboCategorias(){
 }
 
 /**
- * @description Preeche os combos de contas
+ * @description Fill ComboBox Accounts
  */
-function preencheComboContas(){
-    const response = getContas(firebase.auth().currentUser.uid)
-    response.then(contas => {
-        contas.forEach(conta => {
+function fillComboBoxAccounts(){
+    const response = getaccounts(firebase.auth().currentUser.uid)
+    response.then(accounts => {
+        accounts.forEach(account => {
             const option = document.createElement("option")
-            option.value = conta.id + "--"+conta.data().moeda
-            option.innerText = conta.data().nome
-            contaNovaDespesa.appendChild(option)
+            option.value = account.id + "--"+account.data().currency
+            option.innerText = account.data().name
+            accountNewExpense.appendChild(option)
             const optionFiltro = document.createElement("option")
-            optionFiltro.innerText = conta.data().nome
-            contaFiltro.appendChild(optionFiltro)
+            optionFiltro.innerText = account.data().name
+            accountFilter.appendChild(optionFiltro)
         });
     }).catch(error =>{
         console.log(error.message);
@@ -125,316 +128,321 @@ function preencheComboContas(){
 }
 
 /**
- * @description Carrega todas as despesas do usuário na table de despesas
+ * 
+ * @param {string} month 
+ * @param {string} year 
+ * @param {string} category 
+ * @param {string} account 
+ * @description Load all of the user expense at the expense table
  */
- function getAllDespesasMes(mes, ano, categoria, conta){
-    totalDespesa = []
-    while(tableDespesas.childNodes.length > 2){
-        tableDespesas.removeChild(tableDespesas.lastChild);
+ function getAllMonthExpenses(month, year, category, account){
+    totalExpense = []
+    while(tableExpenses.childNodes.length > 2){
+        tableExpenses.removeChild(tableExpenses.lastChild);
     }
-    const dataStart = ano + "-" + mes
-    const mesEnd = parseInt(mes) === 12 ? "01" : "0" + (parseInt(mes) + 1)
-    const dataEnd = ano + "-" + mesEnd
-    const response = getDespesasMes(firebase.auth().currentUser.uid, dataStart, dataEnd, categoria, conta)
-    response.then((despesas) => {
-        despesas.forEach(despesa => {
-            const despesaJSON = despesa.data()
-            despesaJSON.id = despesa.id
+    const dateStart = year + "-" + month
+    const monthEnd = parseInt(month) === 12 ? "01" : "0" + (parseInt(month) + 1)
+    const dateEnd = year + "-" + monthEnd
+    const response = getMonthlyExpense(firebase.auth().currentUser.uid, dateStart, dateEnd, category, account)
+    response.then((expenses) => {
+        expenses.forEach(expense => {
+            const expenseJSON = expense.data()
+            expenseJSON.id = expense.id
             
             let bankAlreadyExist = false;
             
-            totalDespesa.forEach(despesaBank => {
-                if(despesaBank.bank === despesaJSON.conta.nome){
-                    despesaBank.expenseValue += parseFloat(despesaJSON.valor)
+            totalExpense.forEach(expenseBank => {
+                if(expenseBank.bank === expenseJSON.account.name){
+                    expenseBank.expenseValue += parseFloat(expenseJSON.value)
                     bankAlreadyExist = true
                 }
             })
 
             if(!bankAlreadyExist){
-                totalDespesa.push({
-                    "bank": despesaJSON.conta.nome,
-                    "expenseValue": parseFloat(despesaJSON.valor),
-                    "coin": despesaJSON.conta.moeda
+                totalExpense.push({
+                    "bank": expenseJSON.account.name,
+                    "expenseValue": parseFloat(expenseJSON.value),
+                    "coin": expenseJSON.account.currency
                 })
             }
             
-            updateTable(despesaJSON)
+            updateTable(expenseJSON)
         });
-        previsaoMes()
+        previsionMonth()
     }).catch(error =>{
         console.log(error.message);
     })
 }
 
 /**
- * @description Filtro por mês de acordo com o dateFiltro
+ * @description Filter by month
  */
-dateFiltro.addEventListener("change", () => {
-    filtroPesquisa()
+dateFilter.addEventListener("change", () => {
+    filterResearch()
 })
 
 /**
- * @description Filtro por categoria
+ * @description Filter by category
  */
-categoriaFiltro.addEventListener("change", () => {
-    filtroPesquisa()
+categoryFilter.addEventListener("change", () => {
+    filterResearch()
 })
 
 /**
- * @description Filtro por conta
+ * @description Filter by account
  */
-contaFiltro.addEventListener("change", () => {
-    filtroPesquisa()
+accountFilter.addEventListener("change", () => {
+    filterResearch()
 })
 
 /**
- * @description Filtrar
+ * @description Filter
  */
-function filtroPesquisa(){
-    const dateFiltroSplit = dateFiltro.value.split("-")
-    getAllDespesasMes(dateFiltroSplit[1], dateFiltroSplit[0], categoriaFiltro.value, contaFiltro.value)
+function filterResearch(){
+    const dateFilterSplit = dateFilter.value.split("-")
+    getAllMonthExpenses(dateFilterSplit[1], dateFilterSplit[0], categoryFilter.value, accountFilter.value)
 }
 
 /**
  * 
- * @param {JSON} despesa 
- * @description Carrega a table
+ * @param {JSON} expense 
+ * @description Load table
  */
- function updateTable(despesa){
+ function updateTable(expense){
     const tr = document.createElement("TR")
-    const tdNome = document.createElement("TD")
-    const tdData = document.createElement("TD")
-    const tdCategoria = document.createElement("TD")
-    const tdConta = document.createElement("TD")
-    const tdValor = document.createElement("TD")
-    const tdEfetivada = document.createElement("TD")
-    const btnExcluir = document.createElement("BUTTON")
-    const btnAtualizar = document.createElement("BUTTON")
+    const tdName = document.createElement("TD")
+    const tdDate = document.createElement("TD")
+    const tdCategory = document.createElement("TD")
+    const tdAccount = document.createElement("TD")
+    const tdValue = document.createElement("TD")
+    const tdPayed = document.createElement("TD")
+    const btnDelete = document.createElement("BUTTON")
+    const btnUpdate = document.createElement("BUTTON")
     
-    btnExcluir.innerText = "Exluir"
-    btnExcluir.classList.add("btn-table")
-    btnAtualizar.innerText = "Alterar"
-    btnAtualizar.classList.add("btn-table")
+    btnDelete.innerText = "Delte"
+    btnDelete.classList.add("btn-table")
+    btnUpdate.innerText = "Change"
+    btnUpdate.classList.add("btn-table")
 
-    tdNome.innerText = despesa.nome 
-    tdData.innerText = despesa.data
-    tdCategoria.innerText = despesa.categoria
-    tdConta.innerText = typeof despesa.conta === "string" ? despesa.conta : despesa.conta.nome
-    tdValor.innerText = simboloDaMoeda(despesa.conta.moeda) + despesa.valor
-    tr.appendChild(tdNome)
-    tr.appendChild(tdData)
-    tr.appendChild(tdCategoria)
-    tr.appendChild(tdConta)
-    tr.appendChild(tdValor)
-    tr.appendChild(tdEfetivada)
-    tr.appendChild(btnAtualizar)
-    tr.appendChild(btnExcluir)
+    tdName.innerText = expense.name 
+    tdDate.innerText = expense.date
+    tdCategory.innerText = expense.category
+    tdAccount.innerText = typeof expense.account === "string" ? expense.account : expense.account.name
+    tdValue.innerText = symbolFromCurrency(expense.account.currency) + expense.value
+    tr.appendChild(tdName)
+    tr.appendChild(tdDate)
+    tr.appendChild(tdCategory)
+    tr.appendChild(tdAccount)
+    tr.appendChild(tdValue)
+    tr.appendChild(tdPayed)
+    tr.appendChild(btnUpdate)
+    tr.appendChild(btnDelete)
     
-    if(despesa.efetivada === "N"){
-        btnPagar(tdEfetivada, despesa)
+    if(expense.payed === "N"){
+        btnPay(tdPayed, expense)
     }else{
-        btnEfetivada(tdEfetivada, despesa)
+        btnPayed(tdPayed, expense)
     }
 
-    tableDespesas.appendChild(tr)
+    tableExpenses.appendChild(tr)
 
-    btnAtualizar.addEventListener("click", () => {
+    btnUpdate.addEventListener("click", () => {
         const tableButtons = document.querySelectorAll("table button")
         for(var i = 0; i < tableButtons.length; i++){
             tableButtons[i].classList.add("disabled-button")
         }
-        efetivadaNovaDespesa.classList.add("hidden-class")
-        btnCadastrar.classList.add("hidden-class")
-        repetirDespesa.classList.add("hidden-class")
-        btnCancelar.classList.remove("hidden-class")
-        nomeNovaDespesa.value = despesa.nome
-        dateNovaDespesa.value = despesa.data
-        categoriaNovaDespesa.value = despesa.categoria
-        contaNovaDespesa.value = despesa.conta.id + "--" + despesa.conta.moeda
-        valorNovaDespesa.value = despesa.valor
-        efetivadaNovaDespesa.value = despesa.efetivada
-        nomeNovaDespesa.focus()
+        payedNewExpense.classList.add("hidden-class")
+        btnRegister.classList.add("hidden-class")
+        repeatExpense.classList.add("hidden-class")
+        btnCancel.classList.remove("hidden-class")
+        nameNewExpense.value = expense.name
+        dateNewExpense.value = expense.date
+        categoryNewExpense.value = expense.category
+        accountNewExpense.value = expense.account.id + "--" + expense.account.currency
+        valueNewExpense.value = expense.value
+        payedNewExpense.value = expense.payed
+        nameNewExpense.focus()
 
-        const btnAtualizarDespesas = document.createElement("BUTTON")
-        btnAtualizarDespesas.innerText = "Atualizar"
-        divNovosDados.appendChild(btnAtualizarDespesas)
+        const btnUpdateExpense = document.createElement("BUTTON")
+        btnUpdateExpense.innerText = "Update"
+        divNewData.appendChild(btnUpdateExpense)
         
-        btnAtualizarDespesas.addEventListener("click", () => {
-            despesa = getDespesaJson(despesa.id)
+        btnUpdateExpense.addEventListener("click", () => {
+            expense = getExpenseJSON(expense.id)
             
-            getDespesa(firebase.auth().currentUser.uid, despesa.id)
-            .then(despesaDB => {
+            getDespesa(firebase.auth().currentUser.uid, expense.id)
+            .then(expenseDB => {
 
-                if(despesa.conta.nome != despesaDB.data().conta.nome && 
-                    despesaDB.data().efetivada === "S"){
+                if(expense.account.name != expenseDB.data().account.name && 
+                    expenseDB.data().payed === "S"){
 
-                    alert("Não possível alterar a conta de uma despesa já paga.\n Devolva a despesa para alterar a conta!")
+                    alert("Can not change an account from a payed expense.\n Give back the expense to change an account!")
                 }else{
-                    atualizaDespesa(firebase.auth().currentUser.uid, despesa.id, despesa)
-                    tdNome.innerText = despesa.nome 
-                    tdData.innerText = despesa.data
-                    tdCategoria.innerText = despesa.categoria
-                    tdConta.innerText = despesa.conta.nome     
-                    tdValor.innerText = simboloDaMoeda(despesa.conta.moeda) + despesa.valor
+                    updateExpense(firebase.auth().currentUser.uid, expense.id, expense)
+                    tdName.innerText = expense.name 
+                    tdDate.innerText = expense.data
+                    tdCategory.innerText = expense.category
+                    tdAccount.innerText = expense.account.name     
+                    tdValue.innerText = symbolFromCurrency(expense.account.currency) + expense.value
                     
-                    cancelar(btnAtualizarDespesas)
+                    cancel(btnUpdateExpense)
                 }
             }).catch(error => {
                 alert(error.mesage)
             })
         })
 
-        btnCancelar.addEventListener("click", () => {
-            cancelar(btnAtualizarDespesas)
+        btnCancel.addEventListener("click", () => {
+            cancel(btnUpdateExpense)
         })
     })
 
-    btnExcluir.addEventListener("click", () => {
-        if(despesa.efetivada === "S"){
-            creditarDespesa(despesa)
+    btnDelete.addEventListener("click", () => {
+        if(expense.payed === "Y"){
+            creditExpense(expense)
         }
-        excluirDespesa(firebase.auth().currentUser.uid, despesa.id)
+        deleteExpense(firebase.auth().currentUser.uid, expense.id)
         tr.remove()
     })
 
 }
 
 /**
- * @description Pagar despesa
- * @param {String} tdEfetivada 
- * @param {JSON} despesa 
+ * @description Pay expense
+ * @param {String} tdPayed 
+ * @param {JSON} expense 
  */
-function btnPagar(tdEfetivada, despesa){
-    const btnPagar = document.createElement("BUTTON")
-    btnPagar.classList.add("btn-table")
-    btnPagar.classList.add("btn-pagar")
-    btnPagar.innerText = "Pagar"
-    for (child of tdEfetivada.children){
+function btnPay(tdPayed, expense){
+    const btnPay = document.createElement("BUTTON")
+    btnPay.classList.add("btn-table")
+    btnPay.classList.add("btn-pay")
+    btnPay.innerText = "Pagar"
+    for (child of tdPayed.children){
         child.remove();
     }
-    tdEfetivada.appendChild(btnPagar)
-    btnPagar.addEventListener("click", () => {
-        despesa.efetivada = "S"
-        debitarDespesa(despesa)
-        receberDevolverDespesa(firebase.auth().currentUser.uid, despesa.id, despesa.efetivada)
-        btnEfetivada(tdEfetivada, despesa)
+    tdPayed.appendChild(btnPay)
+    btnPay.addEventListener("click", () => {
+        expense.payed = "Y"
+        debitExpense(expense)
+        receiveOrGiveBackExpense(firebase.auth().currentUser.uid, expense.id, expense.payed)
+        btnPayed(tdPayed, expense)
     })
 }
 
 /**
- * @description Reembolsar despesa paga
- * @param {String} tdEfetivada 
- * @param {Json} despesa 
+ * @description Give back payed expense
+ * @param {String} tdPayed 
+ * @param {Json} expense 
  */
-function btnEfetivada(tdEfetivada, despesa){
-    const btnEfetivada = document.createElement("BUTTON")
-    btnEfetivada.classList.add("btn-table")
-    btnEfetivada.innerText = "Efetivada"
-    for (child of tdEfetivada.children){
+function btnPayed(tdPayed, expense){
+    const btnPayed = document.createElement("BUTTON")
+    btnPayed.classList.add("btn-table")
+    btnPayed.innerText = "Payed"
+    for (child of tdPayed.children){
         child.remove();
     }
-    tdEfetivada.appendChild(btnEfetivada)
-    btnEfetivada.addEventListener("click", () => {
-        despesa.efetivada = "N"
-        creditarDespesa(despesa)
-        receberDevolverDespesa(firebase.auth().currentUser.uid, despesa.id, despesa.efetivada)
-        btnPagar(tdEfetivada, despesa)
+    tdPayed.appendChild(btnPayed)
+    btnPayed.addEventListener("click", () => {
+        expense.payed = "N"
+        creditExpense(expense)
+        receiveOrGiveBackExpense(firebase.auth().currentUser.uid, expense.id, expense.payed)
+        btnPay(tdPayed, expense)
     })
 }
 
 /**
  * 
  * @param {String} id 
- * @returns Json de Despesa
+ * @returns Expense JSON
  */
-function getDespesaJson(id){
-    const contaValue = contaNovaDespesa.value.split("--")
-    const despesaJson = {"nome": nomeNovaDespesa.value,
-                        "data": dateNovaDespesa.value,
-                        "categoria": categoriaNovaDespesa.value,
-                        "conta": {
-                            "id": contaValue[0],
-                            "nome": contaNovaDespesa.selectedOptions[0].innerText,
-                            "moeda": contaValue[1]
+function getExpenseJSON(id){
+    const accountValue = accountNewExpense.value.split("--")
+    const expenseJSON = {"name": nameNewExpense.value,
+                        "date": dateNewExpense.value,
+                        "category": categoryNewExpense.value,
+                        "account": {
+                            "id": accountValue[0],
+                            "name": accountNewExpense.selectedOptions[0].innerText,
+                            "currency": accountValue[1]
                         },
-                        "valor": valorNovaDespesa.value,
-                        "efetivada": efetivadaNovaDespesa.value
+                        "value": valueNewExpense.value,
+                        "payed": payedNewExpense.value
                     }
 
     if(id !== undefined){
-        despesaJson.id = id
-        return despesaJson
+        expenseJSON.id = id
+        return expenseJSON
     }
-    return despesaJson
+    return expenseJSON
         
  }
 
 /**
- * @description Click do botão para cadastrar despesa
+ * @description Button click to register expense
  */
-btnCadastrar.addEventListener("click", () => {
-    cadastrarDespesa()
+btnRegister.addEventListener("click", () => {
+    registerExpense()
 })
 
 /**
  * 
- * @param {string} dataDespesa 
- * @returns dia formatado
+ * @param {string} expenseDate 
+ * @returns day formated
  */
-function formataDia(dataDespesa){
-    return dataDespesa.getDate().toString().length === 2 ? dataDespesa.getDate() : "0" + dataDespesa.getDate()
+function formatDay(expenseDate){
+    return expenseDate.getDate().toString().length === 2 ? expenseDate.getDate() : "0" + expenseDate.getDate()
 }
 
 /**
  * 
- * @param {string} dataDespesa 
- * @returns Mês formatado
+ * @param {string} expenseDate 
+ * @returns Motnh formated
  */
-function formataMes(dataDespesa){
-    return (dataDespesa.getMonth() + 1).toString().length === 2 ? (dataDespesa.getMonth() + 1) : "0" + (dataDespesa.getMonth() + 1)
+function formatMonth(expenseDate){
+    return (expenseDate.getMonth() + 1).toString().length === 2 ? (expenseDate.getMonth() + 1) : "0" + (expenseDate.getMonth() + 1)
 }
 
 /**
- * @description Cadastrar despesa
+ * @description Register expense
  */
-function cadastrarDespesa(){
-    const despesaJSON = getDespesaJson()
-    let qtdRepetirDespesa = parseInt(repetirDespesa.value);
-    cadastrarDespesaDB(despesaJSON, qtdRepetirDespesa, dateFiltro.value, null)
+function registerExpense(){
+    const expenseJSON = getExpenseJSON()
+    let qtdRepeatExpense = parseInt(repeatExpense.value);
+    registerExpenseDB(expenseJSON, qtdRepeatExpense, dateFilter.value, null)
 }
 
 /**
  * 
- * @param {JSON} despesaJSON 
- * @param {int} repeticao 
- * @param {string} mesFiltro 
+ * @param {JSON} expenseJSON 
+ * @param {int} repetition 
+ * @param {string} filterMonthly 
  */
-function cadastrarDespesaDB(despesaJSON, repeticao, mesFiltro, numero){
-    const nome = despesaJSON.nome
-    if(numero === null && repeticao > 1){
-        numero = repeticao;
-        despesaJSON.nome += ` 1/${numero}`
-    }else if(repeticao >= 1 && numero != null){
-        const qtd = (numero - repeticao + 1).toString()
-        despesaJSON.nome += ` ${qtd}/${numero}`
+function registerExpenseDB(expenseJSON, repetition, filterMonthly, number){
+    const name = expenseJSON.name
+    if(number === null && repetition > 1){
+        number = repetition;
+        expenseJSON.name += ` 1/${number}`
+    }else if(repetition >= 1 && number != null){
+        const qtd = (number - repetition + 1).toString()
+        expenseJSON.name += ` ${qtd}/${number}`
     }
 
-    criarDespesa(firebase.auth().currentUser.uid, despesaJSON)
-    .then((despesa) => {
-        despesaJSON.id = despesa.id
-        if(despesaJSON.efetivada === "S"){
-            debitarDespesa(despesaJSON)
+    createExpense(firebase.auth().currentUser.uid, expenseJSON)
+    .then((expense) => {
+        expenseJSON.id = expense.id
+        if(expenseJSON.payed === "S"){
+            debitExpense(expenseJSON)
         }
-        if(despesaJSON.data.includes(mesFiltro)){
-            updateTable(despesaJSON)
+        if(expenseJSON.data.includes(filterMonthly)){
+            updateTable(expenseJSON)
         }
-        repeticao--
-        if(repeticao > 0){
-            despesaJSON.data = validaDataRepetição(despesaJSON.data)
-            despesaJSON.nome = nome
-            cadastrarDespesaDB(despesaJSON, repeticao, mesFiltro, numero)
+        repetition--
+        if(repetition > 0){
+            expenseJSON.date = validDateRepetition(expenseJSON.date)
+            expenseJSON.name = name
+            registerExpenseDB(expenseJSON, repetition, filterMonthly, number)
         }else{
-            limparCadastro()
+            cleanRegister()
         }
     }).catch(error => {
         console.log(error.message)
@@ -443,90 +451,87 @@ function cadastrarDespesaDB(despesaJSON, repeticao, mesFiltro, numero){
 
 /**
  * 
- * @param {int} i 
- * @param {string} ano 
- * @param {string} mes 
- * @param {string} dia 
- * @returns data validada
+ * @param {JSON} dataJson 
+ * @returns valid date
  */
-function validaDataRepetição(dataJson){
-    const dataDespesa = new Date(dataJson);
-    let dia = formataDia(dataDespesa)
-    dia = (parseInt(dia) + 1).toString().length === 2 ? (parseInt(dia) + 1).toString() : "0" + (parseInt(dia) + 1).toString()
-    let mes = formataMes(dataDespesa)
-    let ano = dataDespesa.getFullYear()
+function validDateRepetition(dataJson){
+    const expenseDate = new Date(dataJson);
+    let day = formatDay(expenseDate)
+    day = (parseInt(day) + 1).toString().length === 2 ? (parseInt(day) + 1).toString() : "0" + (parseInt(day) + 1).toString()
+    let month = formatMonth(expenseDate)
+    let year = expenseDate.getFullYear()
 
-    if(mes === "12"){
-        mes = "01"
-        ano = (parseInt(ano) + 1).toString()
+    if(month === "12"){
+        month = "01"
+        year = (parseInt(year) + 1).toString()
     }else{
-        mes = (parseInt(mes) + 1).toString().length === 2 ? (parseInt(mes) + 1) : "0" + (parseInt(mes) + 1)
+        month = (parseInt(month) + 1).toString().length === 2 ? (parseInt(month) + 1) : "0" + (parseInt(month) + 1)
     }
 
-    if(mes === "02" && parseInt(dia) > 28){
-        dia = "28"
+    if(month === "02" && parseInt(day) > 28){
+        day = "28"
     }
-    return `${ano}-${mes}-${dia}`
+    return `${year}-${month}-${day}`
 }
 
 /**
- * @description Debita o valor da despesa do total da conta
- * @param {Json} despesaJSON 
+ * @description Debit value
+ * @param {Json} expenseJSON 
  */
-function debitarDespesa(despesaJSON){
-    getConta(firebase.auth().currentUser.uid, despesaJSON.conta.id)
-    .then(conta => {
-        const novoSaldo = conta.data().saldo - despesaJSON.valor
-        atualizaSaldoConta(firebase.auth().currentUser.uid, conta.id, novoSaldo)
+function debitExpense(expenseJSON){
+    getAccount(firebase.auth().currentUser.uid, expenseJSON.account.id)
+    .then(account => {
+        const newBalance = account.data().balance - expenseJSON.valor
+        atualizaSaldoaccount(firebase.auth().currentUser.uid, account.id, newBalance)
     }).catch(error =>{
         console.log(error.message)
     })
 }
 
 /**
- * @description Credita o valor da despesa do total da conta
- * @param {Json} despesaJSON 
+ * @description Credit value
+ * @param {Json} expenseJSON 
  */
- function creditarDespesa(despesaJSON){
-    getConta(firebase.auth().currentUser.uid, despesaJSON.conta.id)
-    .then(conta => {
-        const novoSaldo = parseFloat(conta.data().saldo) + parseFloat(despesaJSON.valor)
-        atualizaSaldoConta(firebase.auth().currentUser.uid, conta.id, novoSaldo)
+ function creditExpense(expenseJSON){
+    getaccount(firebase.auth().currentUser.uid, expenseJSON.account.id)
+    .then(account => {
+        const newBalance = parseFloat(account.data().saldo) + parseFloat(expenseJSON.valor)
+        updateAccountBalance(firebase.auth().currentUser.uid, account.id, newBalance)
     }).catch(error =>{
         console.log(error.message)
     })
 }
 
 /**
- * @description limpa os valores da parte de cadastro
+ * @description Clean values
  */
-function limparCadastro(){
-    nomeNovaDespesa.value = ""
-    dateNovaDespesa.innerText = ""
-    categoriaNovaDespesa.value = ""
-    contaNovaDespesa.value = ""
-    valorNovaDespesa.value = ""
-    efetivadaNovaDespesa.value = "N"
-    repetirDespesa.value = "1"
+function cleanRegister(){
+    nameNewExpense.value = ""
+    dateNewExpense.innerText = ""
+    categoryNewExpense.value = ""
+    accountNewExpense.value = ""
+    valueNewExpense.value = ""
+    payedNewExpense.value = "N"
+    repeatExpense.value = "1"
 }
 
 /**
  * @description Cancela operação
- * @param {BUTTON} btnAtualizarDespesas 
+ * @param {BUTTON} btnUpdateExpenses 
  */
-function cancelar(btnAtualizarDespesas){
-    efetivadaNovaDespesa.classList.remove("hidden-class")
+function cancel(btnUpdateExpenses){
+    payedNewExpense.classList.remove("hidden-class")
     const tableButtons = document.querySelectorAll("table button")
-    btnCadastrar.classList.remove("hidden-class")
-    repetirDespesa.classList.remove("hidden-class")
-    btnAtualizarDespesas.remove()
-    btnCancelar.classList.add("hidden-class")
+    btnRegister.classList.remove("hidden-class")
+    repeatExpense.classList.remove("hidden-class")
+    btnUpdateExpenses.remove()
+    btnCancel.classList.add("hidden-class")
     for(var i = 0; i < tableButtons.length; i++){
         tableButtons[i].classList.remove("disabled-button")
     }
-    limparCadastro()
+    cleanRegister()
 }
 
 //MAIN
 
-verificaUser()
+verifyUser()

@@ -1,52 +1,52 @@
 /**
  * 
  * @param {String} uid  
- * @param {JSON} despesa 
- * @returns Uma promise com a criação da despesa
+ * @param {JSON} expense 
+ * @returns Promisse with expense created
  */
- function criarDespesa(uid, despesa){
-    return firestore.collection("users/" + uid + "/despesas").add(despesa)
+ function createExpense(uid, expense){
+    return firestore.collection("users/" + uid + "/expenses").add(expense)
 }
 
 /**
  * 
  * @param {String} uid 
- * @param {JSON} idDespesa
- * @description exclui uma despesa
+ * @param {JSON} expenseID
+ * @description delete expense
  */
-function excluirDespesa(uid, idDespesa){
-    firestore.doc("users/" + uid + "/despesas/" + idDespesa).delete()
+function deleteExpense(uid, expenseID){
+    firestore.doc("users/" + uid + "/expenses/" + expenseID).delete()
 }
 
 /**
  * 
  * @param {String} uid 
- * @param {String} idDespesa
- * @param {JSON} despesa 
- * @description Atualiza uma despesa
+ * @param {String} expenseID
+ * @param {JSON} expense 
+ * @description Update expense
  */
-function atualizaDespesa(uid, idDespesa, despesa){
-    firestore.doc("users/" + uid + "/despesas/" + idDespesa).set(despesa)
+function updateExpense(uid, expenseID, expense){
+    firestore.doc("users/" + uid + "/expenses/" + expenseID).set(expense)
 }
 
 /**
  * 
  * @param {String} uid 
- * @param {String} anoMesStart 
- * @param {String} anoMesEnd 
- * @param {String} categoria 
- * @param {String} conta 
- * @returns despesas do usuário
+ * @param {String} yearMonthStart 
+ * @param {String} yearMonthEnd 
+ * @param {String} category 
+ * @param {String} account 
+ * @returns User expenses
  */
-function getDespesasMes(uid, anoMesStart, anoMesEnd, categoria, conta){
-    let research = firestore.collection("users/" + uid + "/despesas")
-                                .where("data", ">=", anoMesStart + "-01")
-                                .where("data", "<", anoMesEnd + "-01") 
-    if(categoria != ""){
-        research = research.where("categoria", "==", categoria)            
+function getMonthlyExpense(uid, yearMonthStart, yearMonthEnd, category, account){
+    let research = firestore.collection("users/" + uid + "/expenses")
+                                .where("date", ">=", yearMonthStart + "-01")
+                                .where("date", "<", yearMonthEnd + "-01") 
+    if(category != ""){
+        research = research.where("category", "==", category)            
     }
-    if(conta != ""){
-        research = research.where("conta.nome", "==", conta)            
+    if(account != ""){
+        research = research.where("account.name", "==", account)            
     }
     return research.get()
 }
@@ -54,16 +54,16 @@ function getDespesasMes(uid, anoMesStart, anoMesEnd, categoria, conta){
 /**
  * 
  * @param {String} uid 
- * @param {String} idDespesa
- * @param {String} efetivada 
- * @description Atualiza uma conta
+ * @param {String} expenseID
+ * @param {String} payed 
+ * @description Update account
  */
- function receberDevolverDespesa(uid, idDespesa, efetivada){
-    firestore.doc("users/" + uid + "/despesas/" + idDespesa)
+ function receiveOrGiveBackExpense(uid, expenseID, payed){
+    firestore.doc("users/" + uid + "/expenses/" + expenseID)
     .update({
-        "efetivada": efetivada
+        "payed": payed
     }).then(() =>{
-        console.log("Despesa atualizada com sucesso!")
+        console.log("Expense updated!")
     }).catch(error =>{
         console.log(error.mesage)
     })
@@ -72,8 +72,8 @@ function getDespesasMes(uid, anoMesStart, anoMesEnd, categoria, conta){
 /**
  * 
  * @param {string} uid 
- * @param {string} idDespesa 
+ * @param {string} expenseID 
  */
- function getDespesa(uid, idDespesa){
-    return firestore.doc("users/" + uid + "/despesas/" + idDespesa).get()
+ function getDespesa(uid, expenseID){
+    return firestore.doc("users/" + uid + "/expenses/" + expenseID).get()
 }
