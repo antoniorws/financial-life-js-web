@@ -12,46 +12,46 @@
     <script src="../config/firebaseconfig.js"></script>
     <script src="../repository/contas-repository.js" defer="defer"></script>
     <script src="../service/contas-service.js" defer="defer"></script>
-    <title>Contas</title>
+    <title>Accounts</title>
 </head>
 <body>
     <header class="topnav">
         <a id="nav-home" href="./dashboard.html">Home</a>
         <nav>
-            <a id="nav-contas" href="contas.html">Contas</a>
-            <a id="nav-receitas" href="receitas.html">Receitas</a>
-            <a id="nav-despesas" href="despesas.html">Despesas</a>
-            <a id="nav-categorias" href="categorias.html">Categorias</a>
+            <a id="nav-accounts" href="accounts.html">Accounts</a>
+            <a id="nav-incomes" href="incomes.html">Incomes</a>
+            <a id="nav-expenses" href="expenses.html">Expenses</a>
+            <a id="nav-categories" href="categories.html">Categories</a>
         </nav>
-        <a id="nav-sair" href="./dashboard.html">Sair</a>
+        <a id="nav-getout" href="./dashboard.html">Get Out</a>
     </header>
-    <div class="div-contas">
-        <div id="div-novos-dados">
-            <input  type="text" placeholder="Nome da Conta" id="nomeNovaConta">
-            <select id="tipoConta">
+    <div class="div-accounts">
+        <div id="div-new-data">
+            <input  type="text" placeholder="Account Name" id="nameNewAccount">
+            <select id="accountType">
                 <option value="CC" selected>Conta Corrente</option>
                 <option value="CP">Conta Poupança</option>
                 <option value="CS">Conta Salário</option>
                 <option value="CI">Conta Investimento</option>
             </select>
-            <select id="moeda">
+            <select id="currency">
                 <option value="BRL" selected>BRL</option>
                 <option value="EUR" selected>EUR</option>
                 <option value="USD" selected>USD</option>
             </select>
-            <input  type="number" placeholder="Saldo" id="saldoNovaConta">
-            <button id="cadastrarContas">Cadastrar</button>
-            <button id="cancelaAtualizacao" class="hidden-class">Cancelar</button>
+            <input  type="number" placeholder="Balance" id="balanceNewAccount">
+            <button id="registerAccount">Register</button>
+            <button id="cancelUpdate" class="hidden-class">Cancel</button>
         </div>
         <br>
         <br>
-        <table id="tableContas">
+        <table id="tableAccounts">
             <tr>
               <th>Id</th>
-              <th>Nome</th>
-              <th>Tipo da Conta</th>
-              <th>Moeda</th>
-              <th>Saldo</th>
+              <th>Name</th>
+              <th>Account Type</th>
+              <th>Currency</th>
+              <th>Balance</th>
               <th></th>
             </tr>
         </table>
