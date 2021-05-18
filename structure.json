@@ -1,0 +1,102 @@
+{
+    "users":[
+        {
+            "id": "123456",
+            "name":"Antonio",
+            "password": "22kfjfdodsdf",
+            "email":"rodrigowserra@gmail.com",
+            "accounts":[
+                {
+                    "id": "1",
+                    "name": "Nubank",
+                    "accountType" : "CC",
+                    "currency": "BRL",
+                    "balance": 500
+                },
+                {
+                    "id": "2",
+                    "name": "N26",
+                    "accountType" : "CC",
+                    "currency": "EUR",
+                    "balance": 200
+                }
+            ],
+            "expenses":[  
+                {
+                    "id": 1,
+                    "name":"Celular",
+                    "value": 67.4,
+                    "date": "2021-03-10",
+                    "category":"Celular",
+                    "payed": "N",
+                    "account": {
+                        "id": "1",
+                        "name": "Nubank",
+                        "currency": "BRL"
+                    }
+                },
+                {
+                    "id": 2,    
+                    "name":"Supermercado",
+                    "value": 210.5,
+                    "date": "2021-03-3",
+                    "category": "Alimentação",
+                    "payed": "S",
+                    "account": {
+                        "id": "1",
+                        "name": "Nubank",
+                        "currency": "BRL"
+                    }
+                },
+                {
+                    "id": 1,
+                    "name":"Restaurante",
+                    "value": 50,
+                    "date": "2021-03-20",
+                    "category": "Alimentação Lazer",
+                    "payed": "S",
+                    "account": {
+                        "id": "2",
+                        "name": "N26",
+                        "currency": "EUR"
+                    }
+                }
+            ],
+            "incomes":[
+                {
+                    "id": 2,
+                    "name":"Adentis",
+                    "value": 5000,
+                    "date": "2021-03-1",
+                    "category" : "Salário",
+                    "received": "S",
+                    "conta":{
+                        "id": "2",
+                        "name": "N26",
+                        "currency": "eur"
+                    }
+                }
+            ],
+            "expensesCategory":[
+                {
+                    "id":"1",
+                    "name": "Alimentação"
+                },
+                {
+                    "id":"2",
+                    "name": "Restaurante"
+                }
+            ],
+            "incomesCategory":[
+                {
+                    "id":"1",
+                    "name": "Salário"
+                },
+                {
+                    "id":"2",
+                    "name": "Ações"
+                }
+            ]
+        }
+    ]
+}
