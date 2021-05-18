@@ -1,51 +1,51 @@
-const btnCadastrar = document.querySelector("#cadastrarContas")
-const nomeNovaConta = document.querySelector("#nomeNovaConta")
-const saldoNovaConta = document.querySelector("#saldoNovaConta")
-const tipoContaNovaConta = document.querySelector("#tipoConta")
-const moedaNovaConta = document.querySelector("#moeda")
-const tableContas = document.querySelector("#tableContas")
-const divNovosDados = document.querySelector("#div-novos-dados")
-const btnCancelar = document.querySelector("#cancelaAtualizacao")
+const btnregister = document.querySelector("#registerAccounts")
+const nameNewAccount = document.querySelector("#nameNewAccount")
+const balanceNewAccount = document.querySelector("#balanceNewAccount")
+const accountTypeNewAccount = document.querySelector("#accountType")
+const currencyNewAccount = document.querySelector("#currency")
+const tableAccounts = document.querySelector("#tableAccounts")
+const divNewData = document.querySelector("#div-new-data")
+const btnCancel = document.querySelector("#cancelaAtualizacao")
 
 /**
- * @description Verifica se existe usuário.
+ * @description Verify if user exist
  */
-function verificaUser(){
+function verifyUser(){
     firebase.auth().onAuthStateChanged( (user) => {
         if (user) {
             init()
         } else {
-            console.log('Usuário não logado')
+            console.log('User not logged in!')
         }
     });
 }
 
 /**
- * @description Inicia os métodos
+ * @description Init methods
  */
 function init(){
-    document.querySelector("#nav-contas").classList.add("principal")
-    getAllContas()
+    document.querySelector("#nav-accounts").classList.add("main")
+    getAllAccounts()
 }
 
 /**
- * @description Carrega todas as contas do usuário na table de contas
+ * @description Load all of tha account from user
  */
-function getAllContas(){
-    while(tableContas.childNodes.length > 2){
-        tableContas.removeChild(tableContas.lastChild);
+function getAllAccounts(){
+    while(tableAccounts.childNodes.length > 2){
+        tableAccounts.removeChild(tableAccounts.lastChild);
     }
-    const response = getContas(firebase.auth().currentUser.uid)
-    response.then((contas) => {
-        contas.forEach(conta => {
-            const contaJSON = {
-                "id": conta.id,
-                "nome": conta.data().nome,
-                "tipoConta": conta.data().tipoConta,
-                "moeda": conta.data().moeda,
-                "saldo": conta.data().saldo
+    const response = getAccounts(firebase.auth().currentUser.uid)
+    response.then((accounts) => {
+        accounts.forEach(account => {
+            const accountJSON = {
+                "id": account.id,
+                "name": account.data().name,
+                "accountType": account.data().accountType,
+                "currency": account.data().currency,
+                "balance": account.data().balance
             }
-            updateTable(contaJSON)
+            updateTable(accountJSON)
         });
     }).catch(error =>{
         alert(error.message);
@@ -54,118 +54,122 @@ function getAllContas(){
 
 /**
  * 
- * @param {JSON} conta 
- * @description Carrega a table
+ * @param {JSON} account 
+ * @description Load table
  */
-function updateTable(conta){
+function updateTable(account){
     const tr = document.createElement("TR")
     const tdId = document.createElement("TD")
-    const tdNome = document.createElement("TD")
-    const tdTipoConta = document.createElement("TD")
-    const tdMoeda = document.createElement("TD")
-    const tdSaldo = document.createElement("TD")
-    const btnExcluir = document.createElement("BUTTON")
-    const btnAtualizar = document.createElement("BUTTON")
-    btnExcluir.innerText = "Exluir"
-    btnExcluir.classList.add("btn-table")
-    btnAtualizar.innerText = "Alterar"
-    btnAtualizar.classList.add("btn-table")
-    tdId.className = conta.id
-    tdNome.className = conta.id
-    tdId.innerText = conta.id
-    tdNome.innerText = conta.nome 
-    tdTipoConta.innerText = conta.tipoConta
-    tdMoeda.innerText = conta.moeda
-    tdSaldo.innerText = conta.saldo
+    const tdName = document.createElement("TD")
+    const tdAccountType = document.createElement("TD")
+    const tdCurrency = document.createElement("TD")
+    const tdBalance = document.createElement("TD")
+    const btnDelete = document.createElement("BUTTON")
+    const btnUpdate = document.createElement("BUTTON")
+    btnDelete.innerText = "Delete"
+    btnDelete.classList.add("btn-table")
+    btnUpdate.innerText = "Change"
+    btnUpdate.classList.add("btn-table")
+    tdId.className = account.id
+    tdName.className = account.id
+    tdId.innerText = account.id
+    tdName.innerText = account.name 
+    tdAccountType.innerText = account.accountType
+    tdCurrency.innerText = account.currency
+    tdBalance.innerText = account.balance
     tr.appendChild(tdId)
-    tr.appendChild(tdNome)
-    tr.appendChild(tdTipoConta)
-    tr.appendChild(tdMoeda)
-    tr.appendChild(tdSaldo)
-    tr.appendChild(btnAtualizar)
-    tr.appendChild(btnExcluir)
-    tableContas.appendChild(tr)
+    tr.appendChild(tdName)
+    tr.appendChild(tdAccountType)
+    tr.appendChild(tdCurrency)
+    tr.appendChild(tdBalance)
+    tr.appendChild(btnUpdate)
+    tr.appendChild(btnDelete)
+    tableAccounts.appendChild(tr)
 
-    btnAtualizar.addEventListener("click", () => {
+    btnUpdate.addEventListener("click", () => {
         const tableButtons = document.querySelectorAll("table button")
         for(var i = 0; i < tableButtons.length; i++){
             tableButtons[i].classList.add("disabled-button")
         }
 
-        btnCadastrar.classList.add("hidden-class")
-        btnCancelar.classList.remove("hidden-class")
-        nomeNovaConta.value = conta.nome
-        tipoContaNovaConta.value = conta.tipoConta
-        moedaNovaConta.value = conta.moeda
-        saldoNovaConta.value = conta.saldo
-        nomeNovaConta.focus()
+        btnregister.classList.add("hidden-class")
+        btnCancel.classList.remove("hidden-class")
+        nameNewAccount.value = account.name
+        accountTypeNewAccount.value = account.accountType
+        currencyNewAccount.value = account.currency
+        balanceNewAccount.value = account.balance
+        nameNewAccount.focus()
 
-        const btnAtualizarContas = document.createElement("BUTTON")
-        btnAtualizarContas.innerText = "Atualizar"
-        divNovosDados.appendChild(btnAtualizarContas)
-        btnAtualizarContas.addEventListener("click", () => {
-            const contaJSON = {
-                "nome": nomeNovaConta.value,
-                "tipoConta": tipoContaNovaConta.value,
-                "moeda": moedaNovaConta.value,
-                "saldo": saldoNovaConta.value
+        const btnUpdateAccounts = document.createElement("BUTTON")
+        btnUpdateAccounts.innerText = "Update"
+        divNewData.appendChild(btnUpdateAccounts)
+        btnUpdateAccounts.addEventListener("click", () => {
+            const accountJSON = {
+                "name": nameNewAccount.value,
+                "accountType": accountTypeNewAccount.value,
+                "currency": currencyNewAccount.value,
+                "balance": balanceNewAccount.value
             }
-            atualizaConta(firebase.auth().currentUser.uid, conta.id, contaJSON)
-            tdNome.innerText = nomeNovaConta.value
-            tdMoeda.innerText = moedaNovaConta.value
-            tdTipoConta.innerText = tipoContaNovaConta.value
-            tdSaldo.innerText = saldoNovaConta.value
-            cancelar(btnAtualizarContas)
+            updateAccount(firebase.auth().currentUser.uid, account.id, accountJSON)
+            tdName.innerText = nameNewAccount.value
+            tdCurrency.innerText = currencyNewAccount.value
+            tdAccountType.innerText = accountTypeNewAccount.value
+            tdBalance.innerText = balanceNewAccount.value
+            cancel(btnUpdateAccounts)
             
         })
 
-        btnCancelar.addEventListener("click", () => {
-            cancelar(btnAtualizarContas)
+        btnCancel.addEventListener("click", () => {
+            cancel(btnUpdateAccounts)
         })
     })
 
-    btnExcluir.addEventListener("click", () => {
-        const response = confirm(`Deseja excluir a conta ${conta.nome} e suas movimentações?`);
+    btnDelete.addEventListener("click", () => {
+        const response = confirm(`Are you sure you want delete account ${account.name} and your movimentations?`);
         if (response == true){
             tr.remove()
-            excluirConta(firebase.auth().currentUser.uid, conta.id)
-            //TODO excluir despesas relacionadas a essa conta
+            deleteAccount(firebase.auth().currentUser.uid, account.id)
+            //TODO delte expenses from account deleted
         }
     })
 }
 
-btnCadastrar.addEventListener("click", () => {
-    const contaJSON = {
-        "nome": nomeNovaConta.value,
-        "tipoConta": tipoContaNovaConta.value,
-        "moeda": moedaNovaConta.value,
-        "saldo": saldoNovaConta.value
+btnregister.addEventListener("click", () => {
+    const accountJSON = {
+        "name": nameNewAccount.value,
+        "accountType": accountTypeNewAccount.value,
+        "currency": currencyNewAccount.value,
+        "balance": balanceNewAccount.value
     }
-    criarConta(firebase.auth().currentUser.uid, contaJSON)
-    .then((conta) => {
-        contaJSON.id = conta.id
-        updateTable(contaJSON)
+    createAccount(firebase.auth().currentUser.uid, accountJSON)
+    .then((account) => {
+        accountJSON.id = account.id
+        updateTable(accountJSON)
     }).catch(error => {
         alert(error.message)
     })
-    nomeNovaConta.value = ""
-    saldoNovaConta.value = ""
-    tipoContaNovaConta.value = "CC"
-    moedaNovaConta.value = "BRL"
+    nameNewAccount.value = ""
+    balanceNewAccount.value = ""
+    accountTypeNewAccount.value = "CC"
+    currencyNewAccount.value = "BRL"
 })
 
-function cancelar(btnAtualizarContas){
+/**
+ * @description Back to start
+ * @param {Button} btnUpdateAccounts 
+ */
+function cancel(btnUpdateAccounts){
     const tableButtons = document.querySelectorAll("table button")
-    btnCadastrar.classList.remove("hidden-class")
-    btnAtualizarContas.remove()
-    btnCancelar.classList.add("hidden-class")
-    nomeNovaConta.value = ""
-    tipoContaNovaConta.value = "CC"
-    moedaNovaConta.value = "BRL"
-    saldoNovaConta.value = ""
+    btnregister.classList.remove("hidden-class")
+    btnUpdateAccounts.remove()
+    btnCancel.classList.add("hidden-class")
+    nameNewAccount.value = ""
+    accountTypeNewAccount.value = "CC"
+    currencyNewAccount.value = "BRL"
+    balanceNewAccount.value = ""
     for(var i = 0; i < tableButtons.length; i++){
         tableButtons[i].classList.remove("disabled-button")
     }
 }
 
-verificaUser(); 
+verifyUser(); 

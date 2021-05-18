@@ -1,9 +1,9 @@
-function verificaUser(){
+function verifyUser(){
     firebase.auth().onAuthStateChanged(function(user) {
         if (user) {
             init()
         } else {
-            console.log('Usuário não logado')
+            console.log('User not logged in!')
         }
     });
 }
@@ -12,7 +12,7 @@ function verificaUser(){
  * @description Inicia os métodos para a tela
  */
 function init(){
-    document.querySelector("#nav-home").classList.add("principal")
+    document.querySelector("#nav-home").classList.add("main")
 }
 
-verificaUser()
+verifyUser()
