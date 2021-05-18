@@ -102,7 +102,6 @@ body{
    color: rgb(84, 85, 87);   
 }
 
-/* Add a black background color to the top navigation */
 .topnav {
    overflow: hidden;
    width: 100%;
@@ -110,7 +109,6 @@ body{
 
 }
  
-/* Style the links inside the navigation bar */
 .topnav a {
    float: left;
    color: #504f4f;
@@ -121,7 +119,7 @@ body{
    font-size: large;
 }
 
-.div-contas, .div-expenses{
+.div-accounts, .div-expenses{
    margin: 20px;
 }
 
@@ -131,7 +129,7 @@ nav {
    width: 40%;
 }
 
-#nav-sair{
+#nav-getout{
    float: right;
 }
 
@@ -139,7 +137,6 @@ nav {
    text-decoration: underline !important;
 }
 
-/* Change the color of links on hover */
 .topnav a:hover {
    color: rgb(34, 133, 34);
    font-size: larger;
