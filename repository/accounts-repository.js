@@ -1,47 +1,47 @@
 /**
  * 
  * @param {String} uid 
- * @param {JSON} conta 
- * @returns Uma promise com a criação da conta
+ * @param {JSON} account 
+ * @returns A promisse with account created
  */
-function criarConta(uid, conta){
-    return firestore.collection("users/" + uid + "/contas").add(conta)
+function createAccount(uid, account){
+    return firestore.collection("users/" + uid + "/accounts").add(account)
 }
 
 /**
  * 
  * @param {String} uid 
- * @param {JSON} idConta 
- * @description exclui uma conta
+ * @param {JSON} idAccount 
+ * @description delete account
  */
-function excluirConta(uid, idConta){
-    firestore.doc("users/" + uid + "/contas/" + idConta).delete()
+function deleteAccount(uid, idAccount){
+    firestore.doc("users/" + uid + "/accounts/" + idAccount).delete()
 }
 
 /**
  * 
  * @param {String} uid 
- * @param {String} idConta
- * @param {JSON} conta 
- * @description Atualiza uma conta
+ * @param {String} idAccount
+ * @param {JSON} account 
+ * @description Update account
  */
-function atualizaConta(uid, idConta, conta){
-    firestore.doc("users/" + uid + "/contas/" + idConta).set(conta)
+function updateAccount(uid, idAccount, account){
+    firestore.doc("users/" + uid + "/accounts/" + idAccount).set(account)
 }
 
 /**
  * 
  * @param {String} uid 
- * @param {String} idConta
- * @param {float} saldo 
- * @description Atualiza uma conta
+ * @param {String} idAccount
+ * @param {float} balance 
+ * @description Update balance
  */
- function atualizaSaldoConta(uid, idConta, saldo){
-    firestore.doc("users/" + uid + "/contas/" + idConta)
+ function updateBalanceAccount(uid, idAccount, balance){
+    firestore.doc("users/" + uid + "/accounts/" + idAccount)
     .update({
-        "saldo": saldo
+        "balance": balance
     }).then(() =>{
-        console.log("Conta atualizada com sucesso!")
+        console.log("Account updated!")
     }).catch(error =>{
         console.log(error.mesage)
     })
@@ -50,17 +50,17 @@ function atualizaConta(uid, idConta, conta){
 /**
  * 
  * @param {String} uid 
- * @returns Todas as contas do usuário
+ * @returns All of the accounts from user
  */
-function getContas(uid){
-    return firestore.collection("users/" + uid + "/contas").get()   
+function getAccounts(uid){
+    return firestore.collection("users/" + uid + "/accounts").get()   
 }
 
 /**
  * 
  * @param {String} uid 
- * @returns Uma conta
+ * @returns One account
  */
- function getConta(uid, idConta){
-    return firestore.doc("users/" + uid + "/contas/" + idConta).get()   
+ function getAccount(uid, idAccount){
+    return firestore.doc("users/" + uid + "/accounts/" + idAccount).get()   
 }
