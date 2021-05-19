@@ -30,7 +30,7 @@ function deleteCategory(uid, categoryId, categoryName){
  * @returns A promise with category expense create.
  */
 function createExpenseCategory(uid, name){
-    return firestore.collection("users/" + uid + "/expense_category").add({"nome": name})
+    return firestore.collection("users/" + uid + "/expense_category").add({"name": name})
 }
 
 /**
@@ -47,18 +47,18 @@ function getCategoriesExpense(uid){
 /**
  * 
  * @param {String} uid 
- * @param {String} name 
- * @returns A promise with category income create.
+ * @returns Promise with all of the categories incomes. 
  */
-function createIncomeCategory(uid, name){
-    return firestore.collection("users/" + uid + "/income_category").add({"name": name})
+function getIncomeCategories(uid){
+    return firestore.collection("users/" + uid + "/income_category").get()
 }
 
 /**
  * 
  * @param {String} uid 
- * @returns Promise with all of the categories incomes. 
+ * @param {String} name 
+ * @returns A promise with income category created.
  */
-function getIncomesExpense(uid){
-    return firestore.collection("users/" + uid + "/income_category").get()
+ function createIncomeCategory(uid, name){
+    return firestore.collection("users/" + uid + "/income_category").add({"name": name})
 }

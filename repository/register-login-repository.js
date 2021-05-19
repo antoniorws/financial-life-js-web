@@ -1,3 +1,9 @@
+/**
+ * 
+ * @param {string} email 
+ * @param {string} password 
+ * @param {string} name 
+ */
 function createUser(email, password, name){
     firebase.auth().createUserWithEmailAndPassword(email, password)
     .then((user) => {
@@ -14,6 +20,11 @@ function createUser(email, password, name){
     });
 }
 
+/**
+ * 
+ * @param {string} email 
+ * @param {string} password 
+ */
 function login(email, password){
     firebase.auth().signInWithEmailAndPassword(email, password).then(function(user) {
         const uid = user.user.uid;
@@ -23,16 +34,5 @@ function login(email, password){
     })
     .catch((error) => {
         labelMessage.innerHTML = error.message;
-    });
-}
-
-function sair(){
-    firebase.auth().signOut().then(() => {
-        console.log("User logout");
-        /**
-         * TODO - go to some screen
-         */   
-    }).catch((error) => {
-        console.log(error.message);
     });
 }

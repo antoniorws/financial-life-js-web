@@ -34,7 +34,7 @@ function loadExpensesCategories(){
     while(tableExpenses.childNodes.length > 2){
         tableExpenses.removeChild(tableExpenses.lastChild);
     }
-    const response = getCategoriasDeDespesa(firebase.auth().currentUser.uid)
+    const response = getCategoriesExpense(firebase.auth().currentUser.uid)
     response.then(typesOfExpenses => {
         typesOfExpenses.forEach(typeExpense => {
             updateTable(typeExpense.id, typeExpense.data().name, tableExpenses, "/expense_category/")
@@ -53,7 +53,7 @@ function loadIncomesCategories(){
     while(tableIncomes.childNodes.length > 2){
         tableIncomes.removeChild(tableIncomes.lastChild);
     }
-    const response = getCategoriasDeReceita(firebase.auth().currentUser.uid)
+    const response = getIncomeCategories(firebase.auth().currentUser.uid)
     response.then(typesOfExpenses => {
         typesOfExpenses.forEach(typeExpense => {
             updateTable(typeExpense.id, typeExpense.data().name, tableIncomes, "/income_category/")
@@ -124,7 +124,7 @@ function updateTable(idMovimentation, nameMovimentation, table, category){
         let nameChanged = prompt("Write a new category name:", "");
         if (nameChanged != null && nameChanged != "") {
             tdName.innerText = nameChanged;
-            atualizaCategoria(firebase.auth().currentUser.uid, idMovimentation, nameChanged, category)
+            updateCategory(firebase.auth().currentUser.uid, idMovimentation, nameChanged, category)
         } 
     })
 

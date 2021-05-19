@@ -1,4 +1,4 @@
-const btnregister = document.querySelector("#registerAccounts")
+const btnRegister = document.querySelector("#registerAccount")
 const nameNewAccount = document.querySelector("#nameNewAccount")
 const balanceNewAccount = document.querySelector("#balanceNewAccount")
 const accountTypeNewAccount = document.querySelector("#accountType")
@@ -92,7 +92,7 @@ function updateTable(account){
             tableButtons[i].classList.add("disabled-button")
         }
 
-        btnregister.classList.add("hidden-class")
+        btnRegister.classList.add("hidden-class")
         btnCancel.classList.remove("hidden-class")
         nameNewAccount.value = account.name
         accountTypeNewAccount.value = account.accountType
@@ -134,7 +134,7 @@ function updateTable(account){
     })
 }
 
-btnregister.addEventListener("click", () => {
+btnRegister.addEventListener("click", () => {
     const accountJSON = {
         "name": nameNewAccount.value,
         "accountType": accountTypeNewAccount.value,
@@ -160,7 +160,7 @@ btnregister.addEventListener("click", () => {
  */
 function cancel(btnUpdateAccounts){
     const tableButtons = document.querySelectorAll("table button")
-    btnregister.classList.remove("hidden-class")
+    btnRegister.classList.remove("hidden-class")
     btnUpdateAccounts.remove()
     btnCancel.classList.add("hidden-class")
     nameNewAccount.value = ""
