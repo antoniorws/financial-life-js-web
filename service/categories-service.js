@@ -71,7 +71,7 @@ btnRegisterExpense.addEventListener("click", () => {
     createExpenseCategory(firebase.auth().currentUser.uid, textExpense.value)
     .then((expenseCategory) => {
         updateTable(expenseCategory.id, textExpense.value, tableExpenses, "/expense_category/")
-
+        clean()
     }).catch(error => {
         alert(error.message)
     })
@@ -85,7 +85,7 @@ btnRegisterIncome.addEventListener("click", () => {
     createIncomeCategory(firebase.auth().currentUser.uid, textIncome.value)
     .then((incomeCategory) => {
         updateTable(incomeCategory.id, textIncome.value, tableIncomes, "/income_category/")
-
+        clean()
     }).catch(error => {
         alert(error.message)
     })
@@ -102,7 +102,6 @@ btnRegisterIncome.addEventListener("click", () => {
  */
 function updateTable(idMovimentation, nameMovimentation, table, category){
     const tr = document.createElement("TR")
-    const tdId = document.createElement("TD")
     const tdName = document.createElement("TD")
     const btnDeleteCategory = document.createElement("BUTTON")
     const btnUpdateCategory = document.createElement("BUTTON")
@@ -110,11 +109,8 @@ function updateTable(idMovimentation, nameMovimentation, table, category){
     btnDeleteCategory.classList.add("btn-table")
     btnUpdateCategory.innerText = "Change"
     btnUpdateCategory.classList.add("btn-table")
-    tdId.className = idMovimentation
     tdName.className = idMovimentation
-    tdId.innerText = idMovimentation
     tdName.innerText = nameMovimentation 
-    tr.appendChild(tdId)
     tr.appendChild(tdName)
     tr.appendChild(btnUpdateCategory)
     tr.appendChild(btnDeleteCategory)
@@ -124,6 +120,7 @@ function updateTable(idMovimentation, nameMovimentation, table, category){
         let nameChanged = prompt("Write a new category name:", "");
         if (nameChanged != null && nameChanged != "") {
             tdName.innerText = nameChanged;
+            clean()
             updateCategory(firebase.auth().currentUser.uid, idMovimentation, nameChanged, category)
         } 
     })
@@ -132,6 +129,14 @@ function updateTable(idMovimentation, nameMovimentation, table, category){
         deleteCategory(firebase.auth().currentUser.uid, idMovimentation, category)
         tr.remove()
     })
+}
+
+/**
+ * Clean new category
+ */
+function clean(){
+    textIncome.value = ""
+    textExpense.value = ""
 }
 
 verifyUser(); 
