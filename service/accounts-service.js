@@ -35,7 +35,7 @@ function getAllAccounts(){
     while(tableAccounts.childNodes.length > 2){
         tableAccounts.removeChild(tableAccounts.lastChild);
     }
-    const response = getAccounts(firebase.auth().currentUser.uid)
+    const response = getAccounts()
     response.then((accounts) => {
         accounts.forEach(account => {
             const accountJSON = {
@@ -106,7 +106,8 @@ function updateTable(account){
                 "currency": currencyNewAccount.value,
                 "balance": balanceNewAccount.value
             }
-            updateAccount(firebase.auth().currentUser.uid, account.id, accountJSON)
+            updateAccount(account.id, accountJSON)
+            //TODO update all of the movimentation with new name
             tdName.innerText = nameNewAccount.value
             tdCurrency.innerText = currencyNewAccount.value
             tdAccountType.innerText = accountTypeNewAccount.value
@@ -124,8 +125,9 @@ function updateTable(account){
         const response = confirm(`Are you sure you want delete account ${account.name} and your movimentations?`);
         if (response == true){
             tr.remove()
-            deleteAccount(firebase.auth().currentUser.uid, account.id)
-            //TODO delte expenses from account deleted
+            deleteAccount(account.id)
+            //TODO delete expenses from account deleted
+            //TODO account actvate or not
         }
     })
 }
@@ -137,7 +139,7 @@ btnRegister.addEventListener("click", () => {
         "currency": currencyNewAccount.value,
         "balance": balanceNewAccount.value
     }
-    createAccount(firebase.auth().currentUser.uid, accountJSON)
+    createAccount(accountJSON)
     .then((account) => {
         accountJSON.id = account.id
         updateTable(accountJSON)

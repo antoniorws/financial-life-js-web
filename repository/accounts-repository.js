@@ -1,43 +1,39 @@
 /**
  * 
- * @param {String} uid 
  * @param {JSON} account 
  * @returns A promisse with account created
  */
-function createAccount(uid, account){
-    return firestore.collection("users/" + uid + "/accounts").add(account)
+function createAccount(account){
+    return firestore.collection("users/" + firebase.auth().currentUser.uid + "/accounts").add(account)
 }
 
 /**
  * 
- * @param {String} uid 
  * @param {JSON} idAccount 
  * @description delete account
  */
-function deleteAccount(uid, idAccount){
-    firestore.doc("users/" + uid + "/accounts/" + idAccount).delete()
+function deleteAccount(idAccount){
+    firestore.doc("users/" + firebase.auth().currentUser.uid + "/accounts/" + idAccount).delete()
 }
 
 /**
  * 
- * @param {String} uid 
  * @param {String} idAccount
  * @param {JSON} account 
  * @description Update account
  */
-function updateAccount(uid, idAccount, account){
-    firestore.doc("users/" + uid + "/accounts/" + idAccount).set(account)
+function updateAccount(idAccount, account){
+    firestore.doc("users/" + firebase.auth().currentUser.uid + "/accounts/" + idAccount).set(account)
 }
 
 /**
  * 
- * @param {String} uid 
  * @param {String} idAccount
  * @param {float} balance 
  * @description Update balance
  */
- function updateBalanceAccount(uid, idAccount, balance){
-    firestore.doc("users/" + uid + "/accounts/" + idAccount)
+ function updateBalanceAccount(idAccount, balance){
+    firestore.doc("users/" + firebase.auth().currentUser.uid + "/accounts/" + idAccount)
     .update({
         "balance": balance
     }).then(() =>{
@@ -49,18 +45,16 @@ function updateAccount(uid, idAccount, account){
 
 /**
  * 
- * @param {String} uid 
  * @returns All of the accounts from user
  */
-function getAccounts(uid){
-    return firestore.collection("users/" + uid + "/accounts").get()   
+function getAccounts(){
+    return firestore.collection("users/" + firebase.auth().currentUser.uid + "/accounts").get()   
 }
 
 /**
- * 
- * @param {String} uid 
+ * @param idAccount
  * @returns One account
  */
- function getAccount(uid, idAccount){
-    return firestore.doc("users/" + uid + "/accounts/" + idAccount).get()   
+ function getAccount(idAccount){
+    return firestore.doc("users/" + firebase.auth().currentUser.uid + "/accounts/" + idAccount).get()   
 }

@@ -34,7 +34,7 @@ function loadExpensesCategories(){
     while(tableExpenses.childNodes.length > 2){
         tableExpenses.removeChild(tableExpenses.lastChild);
     }
-    const response = getCategoriesExpense(firebase.auth().currentUser.uid)
+    const response = getCategoriesExpense()
     response.then(typesOfExpenses => {
         typesOfExpenses.forEach(typeExpense => {
             updateTable(typeExpense.id, typeExpense.data().name, tableExpenses, "/expense_category/")
@@ -53,7 +53,7 @@ function loadIncomesCategories(){
     while(tableIncomes.childNodes.length > 2){
         tableIncomes.removeChild(tableIncomes.lastChild);
     }
-    const response = getIncomeCategories(firebase.auth().currentUser.uid)
+    const response = getIncomeCategories()
     response.then(typesOfExpenses => {
         typesOfExpenses.forEach(typeExpense => {
             updateTable(typeExpense.id, typeExpense.data().name, tableIncomes, "/income_category/")
@@ -68,7 +68,7 @@ function loadIncomesCategories(){
  * @description Event click to button Register Expense
  */
 btnRegisterExpense.addEventListener("click", () => {
-    createExpenseCategory(firebase.auth().currentUser.uid, textExpense.value)
+    createExpenseCategory(textExpense.value)
     .then((expenseCategory) => {
         updateTable(expenseCategory.id, textExpense.value, tableExpenses, "/expense_category/")
         clean()
@@ -82,7 +82,7 @@ btnRegisterExpense.addEventListener("click", () => {
  * @description Event click to button Register Income
  */
 btnRegisterIncome.addEventListener("click", () => {
-    createIncomeCategory(firebase.auth().currentUser.uid, textIncome.value)
+    createIncomeCategory(textIncome.value)
     .then((incomeCategory) => {
         updateTable(incomeCategory.id, textIncome.value, tableIncomes, "/income_category/")
         clean()
@@ -121,12 +121,12 @@ function updateTable(idMovimentation, nameMovimentation, table, category){
         if (nameChanged != null && nameChanged != "") {
             tdName.innerText = nameChanged;
             clean()
-            updateCategory(firebase.auth().currentUser.uid, idMovimentation, nameChanged, category)
+            updateCategory(idMovimentation, nameChanged, category)
         } 
     })
 
     btnDeleteCategory.addEventListener("click", () => {
-        deleteCategory(firebase.auth().currentUser.uid, idMovimentation, category)
+        deleteCategory(idMovimentation, category)
         tr.remove()
     })
 }

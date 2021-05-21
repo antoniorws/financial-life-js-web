@@ -7,9 +7,9 @@
 function createUser(email, password, name){
     firebase.auth().createUserWithEmailAndPassword(email, password)
     .then((user) => {
-        const uid = user.user.uid;
+        const uidCreated = user.user.uid;
         const users = firestore.collection("users");
-        users.doc(uid).set({
+        users.doc(uidCreated).set({
             email: email,
             name : name
         })
@@ -27,8 +27,9 @@ function createUser(email, password, name){
  */
 function login(email, password){
     firebase.auth().signInWithEmailAndPassword(email, password).then(function(user) {
-        const uid = user.user.uid;
-        firestore.doc(`users/${uid}`).get().then(()=>{
+        firestore.doc(`users/${user.user.uid}`)
+        .get()
+        .then(()=>{
             window.location.href = "./views/dashboard.html"
         })
     })

@@ -7,7 +7,7 @@ const nameNewIncome = document.querySelector("#nameNewIncome")
 const dateNewIncome = document.querySelector("#dateNewIncome")
 const categoryNewIncome = document.querySelector("#categoryNewIncome")
 const accountNewIncome = document.querySelector("#accountNewIncome")
-const valueNewIncome = document.querySelector("#valueNewIncome")
+const amountNewIncome = document.querySelector("#amountNewIncome")
 const receivedNewIncome = document.querySelector("#receivedNewIncome")
 //filter
 const categoryFilter = document.querySelector("#categoryFilter")
@@ -34,8 +34,8 @@ function verifyUser(){
  */
  function init(){
     const dateToday = new Date();
-    const day = dateToday.getDate().toString.length === 2 ? dateToday.getDate() : "0" + dateToday.getDate()
-    const month = (dateToday.getMonth() + 1).toString.length === 2 ? (dateToday.getMonth() + 1) : "0" + (dateToday.getMonth() + 1)
+    const day = dateToday.getDate().toString().length === 2 ? dateToday.getDate() : "0" + dateToday.getDate()
+    const month = (dateToday.getMonth() + 1).toString().length === 2 ? (dateToday.getMonth() + 1) : "0" + (dateToday.getMonth() + 1)
     const year = dateToday.getFullYear()
     document.querySelector("#nav-incomes").classList.add("main")
     fillComboBoxCategories()
@@ -49,7 +49,7 @@ function verifyUser(){
  * @param {string} day 
  * @param {string} month 
  * @param {string} year 
- * @description Preenche com a data atual
+ * @description Fill with current date
  */
 function fillCurrentDate(day, month, year){
     dateNewIncome.value = year + "-" + month + "-" + day
@@ -80,7 +80,7 @@ function fillCurrentDate(day, month, year){
  * @description Fill Combo Box of Accounts
  */
  function fillComboBoxAccounts(){
-    const response = getaccounts(firebase.auth().currentUser.uid)
+    const response = getAccounts(firebase.auth().currentUser.uid)
     response.then(accounts => {
         accounts.forEach(account => {
             const option = document.createElement("option")
@@ -158,7 +158,7 @@ function filterResearch(){
     const tdDate = document.createElement("TD")
     const tdCategory = document.createElement("TD")
     const tdAccount = document.createElement("TD")
-    const tdValue = document.createElement("TD")
+    const tdAmount = document.createElement("TD")
     const tdReceived = document.createElement("TD")
     const btnDelete = document.createElement("BUTTON")
     const btnUpdate = document.createElement("BUTTON")
@@ -181,12 +181,12 @@ function filterResearch(){
         currencySymbol = "$ "
     }
     
-    tdValue.innerText = currencySymbol + income.value
+    tdAmount.innerText = currencySymbol + income.amount
     tr.appendChild(tdName)
     tr.appendChild(tdDate)
     tr.appendChild(tdCategory)
     tr.appendChild(tdAccount)
-    tr.appendChild(tdValue)
+    tr.appendChild(tdAmount)
     tr.appendChild(tdReceived)
     tr.appendChild(btnUpdate)
     tr.appendChild(btnDelete)
@@ -194,7 +194,7 @@ function filterResearch(){
     if(income.received === "N"){
         btnReceive(tdReceived, income)
     }else{
-        btnreceived(tdReceived, income)
+        btnReceived(tdReceived, income)
     }
 
     tableIncomes.appendChild(tr)
@@ -211,7 +211,7 @@ function filterResearch(){
         dateNewIncome.value = income.date
         categoryNewIncome.value = income.category
         accountNewIncome.value = income.account.id + "--" + income.account.currency
-        valueNewIncome.value = income.value
+        amountNewIncome.value = income.amount
         receivedNewIncome.value = income.received
         nameNewIncome.focus()
 
@@ -221,17 +221,19 @@ function filterResearch(){
         
         btnIncomesUpdate.addEventListener("click", () => {
             income = getIncomeJson(income.id)
+            const incomeUpdate = getIncomeJson()
             getIncome(firebase.auth().currentUser.uid, income.id)
             .then(incomeDB => {
 
-                if(income.account.name != incomeDB.data().account.name && 
+                if((income.account.name != incomeDB.data().account.name
+                    || income.amount != incomeDB.data().amount) && 
                     incomeDB.data().received === "Y"){
                     alert("Can not change an account from a received income.\n Give back the income to change an account!")
                     
                 }else{
-                    updateIncome(firebase.auth().currentUser.uid, income.id, income)
+                    updateIncome(firebase.auth().currentUser.uid, income.id, incomeUpdate)
                     tdName.innerText = income.name 
-                    tdDate.innerText = income.data
+                    tdDate.innerText = income.date
                     tdCategory.innerText = income.category
                     tdAccount.innerText = income.account.name
                     
@@ -244,7 +246,7 @@ function filterResearch(){
                     }else if(income.account.currency === "USD"){
                         symbolCurrency = "$ "
                     }        
-                    tdValue.innerText = symbolCurrency + income.value
+                    tdAmount.innerText = symbolCurrency + income.amount
                     
                     cancel(btnIncomesUpdate)
                 }
@@ -287,7 +289,7 @@ function filterResearch(){
         income.received = "Y"
         creditIncome(income)
         receiveOrGiveBackIncome(firebase.auth().currentUser.uid, income.id, income.received)
-        btnreceived(tdReceived, income)
+        btnReceived(tdReceived, income)
     })
 }
 
@@ -296,10 +298,10 @@ function filterResearch(){
  * @param {String} tdReceived 
  * @param {Json} income 
  */
- function btnreceived(tdReceived, income){
+ function btnReceived(tdReceived, income){
     const btnReceived = document.createElement("BUTTON")
     btnReceived.classList.add("btn-table")
-    btnReceived.innerText = "received"
+    btnReceived.innerText = "Received"
     for (child of tdReceived.children){
         child.remove();
     }
@@ -328,7 +330,7 @@ function filterResearch(){
                             "name": accountNewIncome.selectedOptions[0].innerText,
                             "currency": accountValue[1]
                         },
-                        "value": valueNewIncome.value,
+                        "amount": amountNewIncome.value,
                         "received": receivedNewIncome.value
                     }
 
@@ -368,28 +370,28 @@ btnRegister.addEventListener("click", () => {
 }
 
 /**
- * @description Debit value from income
+ * @description Debit amount from income
  * @param {Json} incomeJSON 
  */
  function debitIncome(incomeJSON){
     getAccount(firebase.auth().currentUser.uid, incomeJSON.account.id)
     .then(account => {
-        const newBalance = account.data().saldo - incomeJSON.value
-        updateAccountBalance(firebase.auth().currentUser.uid, account.id, newBalance)
+        const newBalance = account.data().balance - incomeJSON.amount
+        updateBalanceAccount(firebase.auth().currentUser.uid, account.id, newBalance)
     }).catch(error =>{
         console.log(error.message)
     })
 }
 
 /**
- * @description Credit value from income.
+ * @description Credit amount from income.
  * @param {Json} incomeJSON 
  */
  function creditIncome(incomeJSON){
     getAccount(firebase.auth().currentUser.uid, incomeJSON.account.id)
     .then(account => {
-        const newBalance = parseFloat(account.data().saldo) + parseFloat(incomeJSON.value)
-        updateAccountBalance(firebase.auth().currentUser.uid, account.id, newBalance)
+        const newBalance = parseFloat(account.data().balance) + parseFloat(incomeJSON.amount)
+        updateBalanceAccount(firebase.auth().currentUser.uid, account.id, newBalance)
     }).catch(error =>{
         console.log(error.message)
     })
@@ -403,7 +405,7 @@ btnRegister.addEventListener("click", () => {
     dateNewIncome.innerText = ""
     categoryNewIncome.value = ""
     accountNewIncome.value = ""
-    valueNewIncome.value = ""
+    amountNewIncome.value = ""
     receivedNewIncome.value = "N"   
 }
 

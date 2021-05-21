@@ -1,4 +1,5 @@
 const getOut = document.querySelector("#nav-getout")
+var userGlobal = null
 
 getOut.addEventListener("click", () => {
     getOutFunction()   
@@ -9,10 +10,8 @@ getOut.addEventListener("click", () => {
  */
 function getOutFunction(){
     firebase.auth().signOut().then(() => {
-        console.log("User logout");
-        /**
-         * TODO - go to some screen
-         */   
+        console.log("User logout");   
+        userGlobal = null
     }).catch((error) => {
         console.log(error.message);
     });
