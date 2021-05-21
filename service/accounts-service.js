@@ -5,7 +5,7 @@ const accountTypeNewAccount = document.querySelector("#accountType")
 const currencyNewAccount = document.querySelector("#currency")
 const tableAccounts = document.querySelector("#tableAccounts")
 const divNewData = document.querySelector("#div-new-data")
-const btnCancel = document.querySelector("#cancelaAtualizacao")
+const btnCancel = document.querySelector("#cancelUpdate")
 
 /**
  * @description Verify if user exist
@@ -59,7 +59,6 @@ function getAllAccounts(){
  */
 function updateTable(account){
     const tr = document.createElement("TR")
-    const tdId = document.createElement("TD")
     const tdName = document.createElement("TD")
     const tdAccountType = document.createElement("TD")
     const tdCurrency = document.createElement("TD")
@@ -70,14 +69,11 @@ function updateTable(account){
     btnDelete.classList.add("btn-table")
     btnUpdate.innerText = "Change"
     btnUpdate.classList.add("btn-table")
-    tdId.className = account.id
     tdName.className = account.id
-    tdId.innerText = account.id
     tdName.innerText = account.name 
     tdAccountType.innerText = account.accountType
     tdCurrency.innerText = account.currency
     tdBalance.innerText = account.balance
-    tr.appendChild(tdId)
     tr.appendChild(tdName)
     tr.appendChild(tdAccountType)
     tr.appendChild(tdCurrency)
@@ -94,10 +90,10 @@ function updateTable(account){
 
         btnRegister.classList.add("hidden-class")
         btnCancel.classList.remove("hidden-class")
-        nameNewAccount.value = account.name
-        accountTypeNewAccount.value = account.accountType
-        currencyNewAccount.value = account.currency
-        balanceNewAccount.value = account.balance
+        nameNewAccount.value = tdName.innerText
+        accountTypeNewAccount.value = tdAccountType.innerText
+        currencyNewAccount.value = tdCurrency.innerText
+        balanceNewAccount.value = tdBalance.innerText
         nameNewAccount.focus()
 
         const btnUpdateAccounts = document.createElement("BUTTON")
