@@ -60,7 +60,7 @@ function fillCurrentDate(day, month, year){
  * @description Fill comboBox of the Categories
  */
  function fillComboBoxCategories(){
-    const response = getIncomeCategories(firebase.auth().currentUser.uid)
+    const response = getIncomeCategories()
     response.then(incomesTypes => {
         incomesTypes.forEach(incomeType => {
             const option = document.createElement("option")
@@ -80,7 +80,7 @@ function fillCurrentDate(day, month, year){
  * @description Fill Combo Box of Accounts
  */
  function fillComboBoxAccounts(){
-    const response = getAccounts(firebase.auth().currentUser.uid)
+    const response = getAccounts()
     response.then(accounts => {
         accounts.forEach(account => {
             const option = document.createElement("option")
@@ -135,7 +135,7 @@ function filterResearch(){
     const dateStart = year + "-" + month
     const monthEnd = parseInt(month) === 12 ? "01" : "0" + (parseInt(month) + 1)
     const dateEnd = year + "-" + monthEnd
-    const response = getIncomesMonth(firebase.auth().currentUser.uid, dateStart, dateEnd, category, account)
+    const response = getIncomesMonth(dateStart, dateEnd, category, account)
     response.then((incomes) => {
         incomes.forEach(income => {
             const incomeJSON = income.data()
@@ -222,7 +222,7 @@ function filterResearch(){
         btnIncomesUpdate.addEventListener("click", () => {
             income = getIncomeJson(income.id)
             const incomeUpdate = getIncomeJson()
-            getIncome(firebase.auth().currentUser.uid, income.id)
+            getIncome(income.id)
             .then(incomeDB => {
 
                 if((income.account.name != incomeDB.data().account.name
@@ -231,7 +231,7 @@ function filterResearch(){
                     alert("Can not change an account from a received income.\n Give back the income to change an account!")
                     
                 }else{
-                    updateIncome(firebase.auth().currentUser.uid, income.id, incomeUpdate)
+                    updateIncome(income.id, incomeUpdate)
                     tdName.innerText = income.name 
                     tdDate.innerText = income.date
                     tdCategory.innerText = income.category
@@ -264,7 +264,7 @@ function filterResearch(){
         if(income.received === "S"){
             debitIncome(income)
         }
-        deleteIncome(firebase.auth().currentUser.uid, income.id)
+        deleteIncome(income.id)
         tr.remove()
     })
 
@@ -288,7 +288,7 @@ function filterResearch(){
     btnReceive.addEventListener("click", () => {
         income.received = "Y"
         creditIncome(income)
-        receiveOrGiveBackIncome(firebase.auth().currentUser.uid, income.id, income.received)
+        receiveOrGiveBackIncome(income.id, income.received)
         btnReceived(tdReceived, income)
     })
 }
@@ -310,7 +310,7 @@ function filterResearch(){
     btnReceived.addEventListener("click", () => {
         income.received = "N"
         debitIncome(income)
-        receiveOrGiveBackIncome(firebase.auth().currentUser.uid, income.id, income.received)
+        receiveOrGiveBackIncome(income.id, income.received)
         btnReceive(tdReceived, income)
     })
 }
@@ -354,7 +354,7 @@ btnRegister.addEventListener("click", () => {
  */
  function registerIncome(){
     const incomeJSON = getIncomeJson()
-    createIncome(firebase.auth().currentUser.uid, incomeJSON)
+    createIncome(incomeJSON)
     .then((income) => {
         incomeJSON.id = income.id
         if(receivedNewIncome.value === "Y"){
@@ -374,10 +374,10 @@ btnRegister.addEventListener("click", () => {
  * @param {Json} incomeJSON 
  */
  function debitIncome(incomeJSON){
-    getAccount(firebase.auth().currentUser.uid, incomeJSON.account.id)
+    getAccount(incomeJSON.account.id)
     .then(account => {
         const newBalance = account.data().balance - incomeJSON.amount
-        updateBalanceAccount(firebase.auth().currentUser.uid, account.id, newBalance)
+        updateBalanceAccount(account.id, newBalance)
     }).catch(error =>{
         console.log(error.message)
     })
@@ -388,10 +388,10 @@ btnRegister.addEventListener("click", () => {
  * @param {Json} incomeJSON 
  */
  function creditIncome(incomeJSON){
-    getAccount(firebase.auth().currentUser.uid, incomeJSON.account.id)
+    getAccount(incomeJSON.account.id)
     .then(account => {
         const newBalance = parseFloat(account.data().balance) + parseFloat(incomeJSON.amount)
-        updateBalanceAccount(firebase.auth().currentUser.uid, account.id, newBalance)
+        updateBalanceAccount(account.id, newBalance)
     }).catch(error =>{
         console.log(error.message)
     })
