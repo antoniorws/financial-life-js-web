@@ -15,7 +15,7 @@ function verifyUser(){
         if (user) {
             init()
         } else {
-            console.log('User not logged in!')
+            window.location.href = "../index.html"
         }
     });
 }
