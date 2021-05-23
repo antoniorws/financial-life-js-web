@@ -4,7 +4,7 @@
  * @returns Promisse with expense created
  */
  function createExpense(expense){
-    return firestore.collection("users/" + uid + "/expenses").add(expense)
+    return firestore.collection("users/" + firebase.auth().currentUser.uid + "/expenses").add(expense)
 }
 
 /**
@@ -13,7 +13,7 @@
  * @description delete expense
  */
 function deleteExpense( expenseID){
-    firestore.doc("users/" + uid + "/expenses/" + expenseID).delete()
+    firestore.doc("users/" + firebase.auth().currentUser.uid + "/expenses/" + expenseID).delete()
 }
 
 /**
@@ -23,7 +23,7 @@ function deleteExpense( expenseID){
  * @description Update expense
  */
 function updateExpense(expenseID, expense){
-    firestore.doc("users/" + uid + "/expenses/" + expenseID).set(expense)
+    firestore.doc("users/" + firebase.auth().currentUser.uid + "/expenses/" + expenseID).set(expense)
 }
 
 /**
@@ -35,7 +35,7 @@ function updateExpense(expenseID, expense){
  * @returns User expenses
  */
 function getMonthlyExpense(yearMonthStart, yearMonthEnd, category, account){
-    let research = firestore.collection("users/" + uid + "/expenses")
+    let research = firestore.collection("users/" + firebase.auth().currentUser.uid + "/expenses")
                                 .where("date", ">=", yearMonthStart + "-01")
                                 .where("date", "<", yearMonthEnd + "-01") 
     if(category != ""){
@@ -54,7 +54,7 @@ function getMonthlyExpense(yearMonthStart, yearMonthEnd, category, account){
  * @description Update account
  */
  function receiveOrGiveBackExpense( expenseID, payed){
-    firestore.doc("users/" + uid + "/expenses/" + expenseID)
+    firestore.doc("users/" +  firebase.auth().currentUser.uid+ "/expenses/" + expenseID)
     .update({
         "payed": payed
     }).then(() =>{
@@ -65,10 +65,9 @@ function getMonthlyExpense(yearMonthStart, yearMonthEnd, category, account){
 }
 
 /**
- * 
- * @param {string} uid 
+ *  
  * @param {string} expenseID 
  */
- function getDespesa(uid, expenseID){
-    return firestore.doc("users/" + uid + "/expenses/" + expenseID).get()
+ function getDespesa( expenseID){
+    return firestore.doc("users/" + firebase.auth().currentUser.uid + "/expenses/" + expenseID).get()
 }
