@@ -1,44 +1,40 @@
 /**
  * 
- * @param {String} uid  
  * @param {JSON} expense 
  * @returns Promisse with expense created
  */
- function createExpense(uid, expense){
+ function createExpense(expense){
     return firestore.collection("users/" + uid + "/expenses").add(expense)
 }
 
 /**
  * 
- * @param {String} uid 
  * @param {JSON} expenseID
  * @description delete expense
  */
-function deleteExpense(uid, expenseID){
+function deleteExpense( expenseID){
     firestore.doc("users/" + uid + "/expenses/" + expenseID).delete()
 }
 
 /**
  * 
- * @param {String} uid 
  * @param {String} expenseID
  * @param {JSON} expense 
  * @description Update expense
  */
-function updateExpense(uid, expenseID, expense){
+function updateExpense(expenseID, expense){
     firestore.doc("users/" + uid + "/expenses/" + expenseID).set(expense)
 }
 
 /**
  * 
- * @param {String} uid 
  * @param {String} yearMonthStart 
  * @param {String} yearMonthEnd 
  * @param {String} category 
  * @param {String} account 
  * @returns User expenses
  */
-function getMonthlyExpense(uid, yearMonthStart, yearMonthEnd, category, account){
+function getMonthlyExpense(yearMonthStart, yearMonthEnd, category, account){
     let research = firestore.collection("users/" + uid + "/expenses")
                                 .where("date", ">=", yearMonthStart + "-01")
                                 .where("date", "<", yearMonthEnd + "-01") 
@@ -53,12 +49,11 @@ function getMonthlyExpense(uid, yearMonthStart, yearMonthEnd, category, account)
 
 /**
  * 
- * @param {String} uid 
  * @param {String} expenseID
  * @param {String} payed 
  * @description Update account
  */
- function receiveOrGiveBackExpense(uid, expenseID, payed){
+ function receiveOrGiveBackExpense( expenseID, payed){
     firestore.doc("users/" + uid + "/expenses/" + expenseID)
     .update({
         "payed": payed
