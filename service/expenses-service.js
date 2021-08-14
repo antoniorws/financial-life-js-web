@@ -111,7 +111,7 @@ function fillComboBoxCategories(){
  * @description Fill ComboBox Accounts
  */
 function fillComboBoxAccounts(){
-    const response = getaccounts(firebase.auth().currentUser.uid)
+    const response = getAccounts()
     response.then(accounts => {
         accounts.forEach(account => {
             const option = document.createElement("option")
